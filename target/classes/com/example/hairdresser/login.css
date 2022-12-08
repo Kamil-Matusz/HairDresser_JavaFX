@@ -1,0 +1,36 @@
+.bg-form {
+    -fx-background-color: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+}
+
+.textfield {
+    -fx-background-color: transparent;
+    -fx-text-inner-color: #fff;
+    -fx-border-color: #d63333;
+    -fx-border-width: 0px 0px .4px 0px;
+}
+
+.textfield:focused {
+    -fx-border-color: #fb6363;
+    -fx-border-width: 0px 0px 1px 0px;
+}
+
+.login-button {
+    -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb);
+    -fx-background-radius: 8px;
+    -fx-text-fill: #fff;
+    -fx-font-fize: 14px;
+    -fx-cursor: hand;
+}
+
+.hyperlink {
+    -fx-underline: false;
+    -fx-text-fill: red;
+}
+
+.signup-button {
+    -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb);
+    -fx-background-radius: 8px;
+      -fx-font-fize: 14px;
+        -fx-cursor: hand;
+}
+
