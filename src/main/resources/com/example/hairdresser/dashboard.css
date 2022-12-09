@@ -45,4 +45,56 @@
 }
 
 .add-button {
+    -fx-background-color: green;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+
+.update-button {
+    -fx-background-color: blue;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+
+.clear-button {
+    -fx-background-color: pink;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+
+.delete-button {
+    -fx-background-color: red;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+
+.search {
+    -fx-background-color: #fff;
+    -fx-background-radius: 4px;
+    -fx-font-size: 13px;
+    -fx-border-color: grey;
+}
+
+.table-view {
+    -fx-border-color: gray;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+}
+
+.table-view .table-column {
+    -fx-alignment: CENTER;
+}
+
+.table-view .column-header .filter {
+    -fx-background-transparent;
+    -fx-size: 40px;
 }
