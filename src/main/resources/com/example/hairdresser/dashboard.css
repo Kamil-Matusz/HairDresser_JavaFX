@@ -1,0 +1,26 @@
+.top-form {
+    -fx-background-color: #fff;
+    -fx-border-color: #000;
+    -fx-border-width: .2px .2px .4px .2px;
+}
+
+.nav-form {
+    -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb);
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+}
+
+.nav-button: hover {
+    -fx-background-color: #ae2d3c;
+}
+
+.signout {
+    -fx-background-color: #ae2d3c;
+    -fx-border-radius: 15px;
+    -fx-cursor: hand;
+}
