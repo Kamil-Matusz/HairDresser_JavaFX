@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hairdresser.Dashboard">
+<AnchorPane fx:id="main_form" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hairdresser.DashboardController">
    <children>
       <BorderPane layoutX="69.0" layoutY="33.0" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -46,12 +46,12 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="home_Button" layoutX="13.0" layoutY="173.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Dashboard" />
-                  <Button fx:id="purchase_Button" layoutX="13.0" layoutY="219.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Add Reservation" />
-                  <Button fx:id="availableServices_Button" layoutX="13.0" layoutY="267.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Services" />
+                  <Button fx:id="home_Button" layoutX="13.0" layoutY="173.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Dashboard" />
+                  <Button fx:id="purchase_Button" layoutX="13.0" layoutY="219.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Add Reservation" />
+                  <Button fx:id="availableServices_Button" layoutX="13.0" layoutY="267.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Services" />
                   <Button layoutX="13.0" layoutY="316.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Edit panel" />
                   <Button layoutX="13.0" layoutY="360.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" styleClass="nav-button" stylesheets="@dashboard.css" text="Customers List" />
-                  <Button fx:id="logout_Button" layoutX="35.0" layoutY="472.0" mnemonicParsing="false" styleClass="signout" stylesheets="@dashboard.css" text="Sign Out" />
+                  <Button fx:id="logout_Button" layoutX="35.0" layoutY="472.0" mnemonicParsing="false" onAction="#logout" styleClass="signout" stylesheets="@dashboard.css" text="Sign Out" />
                </children>
             </AnchorPane>
          </left>

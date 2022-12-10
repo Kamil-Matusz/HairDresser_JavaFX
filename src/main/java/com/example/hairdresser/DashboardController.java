@@ -1,11 +1,17 @@
 package com.example.hairdresser;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
@@ -104,6 +110,52 @@ public class DashboardController implements Initializable {
 
     @FXML
     private Label username;
+
+    @FXML
+    private AnchorPane main_form;
+
+    public void switchForm(ActionEvent event) {
+        if(event.getSource() == home_Button) {
+            home_form.setVisible(true);
+            availableServices_form.setVisible(false);
+            purchase_form.setVisible(false);
+        }
+        else if(event.getSource() == availableServices_Button) {
+            home_form.setVisible(false);
+            availableServices_form.setVisible(true);
+            purchase_form.setVisible(false);
+        }
+        else if(event.getSource() == purchase_Button) {
+            home_form.setVisible(false);
+            availableServices_form.setVisible(false);
+            purchase_form.setVisible(true);
+        }
+    }
+
+    public void logout() {
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure ?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if(option.get().equals(ButtonType.OK)) {
+
+                logout_Button.getScene().getWindow().hide();
+
+                Parent root = FXMLLoader.load(getClass().getResource("mainpanel.fxml"));
+                Scene scene = new Scene(root);
+                Stage stage = new Stage();
+
+                stage.setScene(scene);
+                stage.show();
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
