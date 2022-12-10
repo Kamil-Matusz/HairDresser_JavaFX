@@ -58,7 +58,7 @@
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <AnchorPane fx:id="home_form" layoutX="300.0" layoutY="134.0" prefHeight="521.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="home_form" layoutX="300.0" layoutY="134.0" prefHeight="521.0" prefWidth="800.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <AnchorPane layoutX="11.0" layoutY="15.0" prefHeight="135.0" prefWidth="776.0" stylesheets="@dashboard.css" AnchorPane.bottomAnchor="371.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="15.0">
                            <styleClass>
@@ -120,7 +120,7 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="availableServices_form" layoutX="175.0" layoutY="34.0" prefHeight="521.0" prefWidth="800.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="availableServices_form" layoutX="175.0" layoutY="34.0" prefHeight="521.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <AnchorPane layoutX="6.0" layoutY="6.0" prefHeight="508.0" prefWidth="225.0" stylesheets="@dashboard.css">
                            <styleClass>
@@ -128,12 +128,12 @@
                               <String fx:value="shadow" />
                            </styleClass>
                            <children>
-                              <Label layoutX="22.0" layoutY="69.0" text="Service Id :" />
-                              <TextField fx:id="availableServices_serviceID" layoutX="18.0" layoutY="105.0" prefHeight="25.0" prefWidth="184.0" styleClass="textfield" stylesheets="@dashboard.css" />
-                              <Label layoutX="22.0" layoutY="157.0" text="Service Name :" />
-                              <TextField fx:id="availableServices_serviceName" layoutX="18.0" layoutY="193.0" prefHeight="25.0" prefWidth="184.0" styleClass="textfield" stylesheets="@dashboard.css" />
-                              <Label layoutX="22.0" layoutY="247.0" text="Price : " />
-                              <TextField fx:id="availableServices_price" layoutX="18.0" layoutY="283.0" prefHeight="25.0" prefWidth="184.0" promptText="\$0.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                              <Label layoutX="22.0" layoutY="31.0" text="Service Id :" />
+                              <TextField fx:id="availableServices_serviceID" layoutX="18.0" layoutY="67.0" prefHeight="25.0" prefWidth="184.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                              <Label layoutX="22.0" layoutY="135.0" text="Service Name :" />
+                              <TextField fx:id="availableServices_serviceName" layoutX="18.0" layoutY="171.0" prefHeight="25.0" prefWidth="184.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                              <Label layoutX="25.0" layoutY="224.0" text="Price : " />
+                              <TextField fx:id="availableServices_price" layoutX="21.0" layoutY="260.0" prefHeight="25.0" prefWidth="184.0" promptText="\$0.0" styleClass="textfield" stylesheets="@dashboard.css" />
                               <Button fx:id="availableServices_addButton" layoutX="14.0" layoutY="355.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="75.0" styleClass="add-button" stylesheets="@dashboard.css" text="Add" />
                               <Button fx:id="availableServices_updateButton" layoutX="113.0" layoutY="355.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="75.0" styleClass="update-button" stylesheets="@dashboard.css" text="Update" />
                               <Button fx:id="availableServices_clearButton" layoutX="13.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="75.0" styleClass="clear-button" stylesheets="@dashboard.css" text="Clear" />
@@ -158,9 +158,9 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="purchase_form" layoutX="200.0" layoutY="45.0" prefHeight="521.0" prefWidth="800.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="purchase_form" layoutX="200.0" layoutY="45.0" prefHeight="521.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane layoutX="14.0" layoutY="8.0" prefHeight="504.0" prefWidth="777.0" stylesheets="@dashboard.css">
+                        <AnchorPane layoutX="14.0" layoutY="8.0" prefHeight="504.0" prefWidth="777.0" stylesheets="@dashboard.css" visible="false">
                            <styleClass>
                               <String fx:value="white-bg" />
                               <String fx:value="shadow" />
@@ -176,7 +176,7 @@
                                     <ComboBox fx:id="purchase_serviceId" layoutX="133.0" layoutY="20.0" prefWidth="150.0" promptText="Choose" />
                                     <Label layoutX="22.0" layoutY="72.0" text="Service Name :" />
                                     <ComboBox fx:id="purchase_serviceName" layoutX="133.0" layoutY="68.0" prefWidth="150.0" promptText="Choose" />
-                                    <Spinner fx:id="purchase_quantity" layoutX="134.0" layoutY="111.0" />
+                                    <Spinner fx:id="purchase_quantity" layoutX="134.0" layoutY="111.0" visible="false" />
                                     <Label layoutX="22.0" layoutY="115.0" text="Quantity :" />
                                     <Label layoutX="397.0" layoutY="37.0" text="Total : ">
                                        <font>
@@ -193,10 +193,11 @@
                               </AnchorPane>
                               <TableView fx:id="purchase_tableView" layoutX="22.0" layoutY="238.0" prefHeight="238.0" prefWidth="737.0">
                                 <columns>
-                                  <TableColumn fx:id="purchase_col_ServiceID" prefWidth="181.0" text="Service ID" />
-                                  <TableColumn fx:id="purchase_col_Service_Name" prefWidth="217.0" text="Service Name" />
-                                    <TableColumn fx:id="purchase_col_Quantity" prefWidth="163.0" text="Quantity" />
-                                    <TableColumn fx:id="purchase_col_Price" prefWidth="190.0" text="Price" />
+                                  <TableColumn fx:id="purchase_col_ServiceID" prefWidth="100.0" text="Service ID" />
+                                  <TableColumn fx:id="purchase_col_Service_Name" prefWidth="206.0" text="Service Name" />
+                                    <TableColumn fx:id="purchase_col_Quantity" prefWidth="105.0" text="Quantity" />
+                                    <TableColumn fx:id="purchase_col_Price" prefWidth="133.0" text="Price" />
+                                    <TableColumn fx:id="purchase_col_Date" prefWidth="188.0" text="Date" />
                                 </columns>
                               </TableView>
                            </children>

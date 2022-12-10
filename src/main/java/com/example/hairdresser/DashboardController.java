@@ -1,5 +1,7 @@
 package com.example.hairdresser;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -114,21 +116,42 @@ public class DashboardController implements Initializable {
     @FXML
     private AnchorPane main_form;
 
+    public void displayUsername() {
+        String user = User.path;
+        username.setText(user.substring(0,1).toUpperCase() + user.substring(1));
+    }
+
+    public ObservableList<Service> availableServiceList() {
+        ObservableList<Service> listData = FXCollections.observableArrayList();
+    }
+
     public void switchForm(ActionEvent event) {
         if(event.getSource() == home_Button) {
             home_form.setVisible(true);
             availableServices_form.setVisible(false);
             purchase_form.setVisible(false);
+
+            home_Button.setStyle(" -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb)");
+            availableServices_Button.setStyle("-fx-background-color: transparent");
+            purchase_Button.setStyle("-fx-background-color: transparent");
         }
         else if(event.getSource() == availableServices_Button) {
             home_form.setVisible(false);
             availableServices_form.setVisible(true);
             purchase_form.setVisible(false);
+
+            home_Button.setStyle(" -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb)");
+            availableServices_Button.setStyle("-fx-background-color: transparent");
+            purchase_Button.setStyle("-fx-background-color: transparent");
         }
         else if(event.getSource() == purchase_Button) {
             home_form.setVisible(false);
             availableServices_form.setVisible(false);
             purchase_form.setVisible(true);
+
+            home_Button.setStyle(" -fx-background-color: linear-gradient(to right top, #370521, #50325e, #4f649c, #2e99ce, #12cfeb)");
+            availableServices_Button.setStyle("-fx-background-color: transparent");
+            purchase_Button.setStyle("-fx-background-color: transparent");
         }
     }
 
@@ -158,6 +181,6 @@ public class DashboardController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        displayUsername();
     }
 }
