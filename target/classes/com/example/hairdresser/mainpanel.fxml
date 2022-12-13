@@ -8,40 +8,40 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hairdresser.HelloController">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hairdresser.HelloController">
    <children>
-      <AnchorPane fx:id="signIn_form" layoutY="1.0" prefHeight="922.0" prefWidth="1306.0" styleClass="bg-form" stylesheets="@login.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="signIn_form" layoutY="1.0" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label layoutX="650.0" layoutY="200.0" text="Sign In">
+            <Label layoutX="464.0" layoutY="160.0" text="Sign In">
                <font>
                   <Font name="System Italic" size="24.0" />
                </font>
             </Label>
-            <TextField fx:id="signIn_username" layoutX="570.0" layoutY="296.0" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@login.css" />
-            <PasswordField fx:id="signIn_password" layoutX="570.0" layoutY="380.0" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@login.css" />
-            <Button fx:id="signIn_loginButton" layoutX="627.0" layoutY="482.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="106.0" styleClass="login-button" stylesheets="@login.css" text="Login" />
-            <Hyperlink fx:id="signIn_createAccount" layoutX="604.0" layoutY="598.0" onAction="#switchForms" stylesheets="@login.css" text="Create a new account">
+            <TextField fx:id="signIn_username" layoutX="390.0" layoutY="225.0" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@login.css" />
+            <PasswordField fx:id="signIn_password" layoutX="390.0" layoutY="284.0" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@login.css" />
+            <Button fx:id="signIn_loginButton" layoutX="447.0" layoutY="373.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="106.0" styleClass="login-button" stylesheets="@login.css" text="Login" />
+            <Hyperlink fx:id="signIn_createAccount" layoutX="424.0" layoutY="475.0" onAction="#switchForms" stylesheets="@login.css" text="Create a new account">
                <font>
                   <Font size="15.0" />
                </font></Hyperlink>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="signUp_form" prefHeight="922.0" prefWidth="1306.0" styleClass="bg-form" stylesheets="@login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="signUp_form" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label layoutX="650.0" layoutY="200.0" text="Sign Up">
+            <Label layoutX="460.0" layoutY="146.0" text="Sign Up">
                <font>
                   <Font name="System Italic" size="24.0" />
                </font>
             </Label>
-            <TextField fx:id="signUp_username" layoutX="581.0" layoutY="293.0" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@login.css" />
-            <PasswordField fx:id="signUp_password" layoutX="581.0" layoutY="356.0" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@login.css" />
-            <Button fx:id="signUp_button" layoutX="638.0" layoutY="518.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="106.0" styleClass="signup-button" stylesheets="@login.css" text="Sign Up" />
-            <Hyperlink fx:id="signUp_alreadyHaveAccount" layoutX="600.0" layoutY="634.0" onAction="#switchForms" stylesheets="@login.css" text="Already have an account ?">
+            <TextField fx:id="signUp_username" layoutX="391.0" layoutY="208.0" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@login.css" />
+            <PasswordField fx:id="signUp_password" layoutX="391.0" layoutY="280.0" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@login.css" />
+            <Button fx:id="signUp_button" layoutX="447.0" layoutY="436.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="106.0" styleClass="signup-button" stylesheets="@login.css" text="Sign Up" />
+            <Hyperlink fx:id="signUp_alreadyHaveAccount" layoutX="409.0" layoutY="541.0" onAction="#switchForms" stylesheets="@login.css" text="Already have an account ?">
                <font>
                   <Font size="15.0" />
                </font>
             </Hyperlink>
-            <TextField fx:id="signUp_email" layoutX="581.0" layoutY="414.0" prefHeight="30.0" prefWidth="220.0" promptText="Email Address" styleClass="textfield" stylesheets="@login.css" />
+            <TextField fx:id="signUp_email" layoutX="391.0" layoutY="362.0" prefHeight="30.0" prefWidth="220.0" promptText="Email Address" styleClass="textfield" stylesheets="@login.css" />
          </children>
       </AnchorPane>
    </children>
