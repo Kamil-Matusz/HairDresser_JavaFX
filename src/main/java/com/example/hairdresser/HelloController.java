@@ -5,6 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +45,37 @@ public class HelloController {
 
     @FXML
     private TextField signUp_username;
+
+    private Connection connect;
+    private PreparedStatement prepare;
+    private Statement statement;
+    private ResultSet result;
+
+    public void signIn() {
+        String sql = "SELECT * FROM users WHERE username = ? and password = ?";
+        connect = DatabaseConnection.connectDB();
+
+        try {
+            prepare = connect.prepareStatement(sql);
+            prepare.setString(1,signIn_username.getText());
+            prepare.setString(2,signIn_password.getText());
+            
+            result = prepare.executeQuery();
+
+            Alert alert;
+
+            if(signIn_username.getText().isEmpty() || signIn_password.getText().isEmpty()) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void switchForms(ActionEvent event) {
         if(event.getSource() == signIn_createAccount) {
