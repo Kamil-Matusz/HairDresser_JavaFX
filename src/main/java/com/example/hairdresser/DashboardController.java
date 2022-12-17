@@ -1,5 +1,7 @@
 package com.example.hairdresser;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,10 +9,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -19,10 +26,13 @@ public class DashboardController implements Initializable {
     private AnchorPane main_form;
 
     @FXML
-    private TableColumn<?, ?> availableService_NameColumn;
+    private TableColumn<Service, String> availableService_IDColumn;
 
     @FXML
-    private TableColumn<?, ?> availableService_PriceColumn;
+    private TableColumn<Service, String> availableService_NameColumn;
+
+    @FXML
+    private TableColumn<Service, String> availableService_PriceColumn;
 
     @FXML
     private Button availableService_addButton;
@@ -49,7 +59,7 @@ public class DashboardController implements Initializable {
     private TextField availableService_servicePrice;
 
     @FXML
-    private TableView<?> availableService_tableView;
+    private TableView<Service> availableService_tableView;
 
     @FXML
     private Button availableService_updateButton;
@@ -115,19 +125,39 @@ public class DashboardController implements Initializable {
     private Label reservation_total;
 
 
+    private Connection connect;
+    private PreparedStatement prepare;
+    private Statement statement;
+    private ResultSet result;
+
     public void switchForm(ActionEvent event) {
         if(event.getSource() == home_Button) {
             home_form.setVisible(true);
             availableService_form.setVisible(false);
             reservation_form.setVisible(false);
+
+            home_Button.setStyle("-fx-background-color: red");
+            availableServices_Button.setStyle("-fx-background-color: transprarent");
+            reservation_Button.setStyle("-fx-background-color: transprarent");
+
         }else if(event.getSource() == availableServices_Button) {
             home_form.setVisible(false);
             availableService_form.setVisible(true);
             reservation_form.setVisible(false);
+
+            availableServiceShowList();
+
+            home_Button.setStyle("-fx-background-color: transparent");
+            availableServices_Button.setStyle("-fx-background-color: red");
+            reservation_Button.setStyle("-fx-background-color: transprarent");
         }else if(event.getSource() == reservation_Button) {
             home_form.setVisible(false);
             availableService_form.setVisible(false);
             reservation_form.setVisible(true);
+
+            home_Button.setStyle("-fx-background-color: transparent");
+            availableServices_Button.setStyle("-fx-background-color: transprarent");
+            reservation_Button.setStyle("-fx-background-color: red");
         }
     }
 
@@ -142,7 +172,7 @@ public class DashboardController implements Initializable {
             if(option.get().equals(ButtonType.OK)) {
 
                 logoutButton.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("mainpanel.xml"));
+                Parent root = FXMLLoader.load(getClass().getResource("mainpanel.fxml"));
                 Scene scene = new Scene(root);
                 Stage stage = new Stage();
                 stage.setScene(scene);
@@ -154,8 +184,41 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public ObservableList<Service> availableServices() {
+
+        String sql = "SELECT * FROM services";
+        ObservableList<Service> listData = FXCollections.observableArrayList();
+        connect = DatabaseConnection.connectDB();
+        try {
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+            Service service;
+
+            while (result.next()) {
+                service  = new Service(result.getInt("service_Id"),result.getString("service_Name"),result.getDouble("service_price"),result.getDate("service_Date"));
+                listData.add(service);
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  listData;
+    }
+
+    private ObservableList<Service> availableServicesList;
+    public void availableServiceShowList() {
+        availableServicesList = availableServices();
+
+        availableService_IDColumn.setCellValueFactory(new PropertyValueFactory<>("service_Id"));
+        availableService_NameColumn.setCellValueFactory(new PropertyValueFactory<>("service_Name"));
+        availableService_PriceColumn.setCellValueFactory(new PropertyValueFactory<>("service_Price"));
+
+        availableService_tableView.setItems(availableServicesList);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        availableServiceShowList();
     }
 }

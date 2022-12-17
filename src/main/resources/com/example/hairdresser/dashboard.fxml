@@ -68,7 +68,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" prefHeight="128.0" prefWidth="710.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -143,7 +143,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="23.0" layoutY="20.0" prefHeight="532.0" prefWidth="236.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -172,7 +172,7 @@
                                     <TextField fx:id="availableService_search" layoutX="14.0" layoutY="14.0" promptText="Search :" styleClass="search" stylesheets="@dashboard.css" />
                                     <TableView fx:id="availableService_tableView" layoutX="15.0" layoutY="66.0" prefHeight="442.0" prefWidth="399.0" styleClass="tabble-view" stylesheets="@dashboard.css">
                                       <columns>
-                                        <TableColumn prefWidth="94.0" text="Service ID" />
+                                        <TableColumn fx:id="availableService_IDColumn" prefWidth="94.0" text="Service ID" />
                                         <TableColumn fx:id="availableService_NameColumn" prefWidth="178.0" text="Service Name" />
                                           <TableColumn fx:id="availableService_PriceColumn" prefWidth="143.0" text="Price" />
                                           <TableColumn prefWidth="94.0" text="Service ID" />
