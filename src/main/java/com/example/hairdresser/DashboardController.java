@@ -18,21 +18,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DashboardController implements Initializable {
-    @FXML
-    private AnchorPane main_form;
-
-    @FXML
-    private TableColumn<Service, String> availableService_IDColumn;
-
     @FXML
     private TableColumn<Service, String> availableService_NameColumn;
 
     @FXML
     private TableColumn<Service, String> availableService_PriceColumn;
+
+    @FXML
+    private TableColumn<Service, String> availableService_StatusColumn;
 
     @FXML
     private Button availableService_addButton;
@@ -50,13 +46,13 @@ public class DashboardController implements Initializable {
     private TextField availableService_search;
 
     @FXML
-    private TextField availableService_serviceID;
-
-    @FXML
     private TextField availableService_serviceName;
 
     @FXML
     private TextField availableService_servicePrice;
+
+    @FXML
+    private ComboBox<?> availableService_serviceStatus;
 
     @FXML
     private TableView<Service> availableService_tableView;
@@ -84,6 +80,9 @@ public class DashboardController implements Initializable {
 
     @FXML
     private Button logoutButton;
+
+    @FXML
+    private AnchorPane main_form;
 
     @FXML
     private AnchorPane rese;
@@ -125,6 +124,7 @@ public class DashboardController implements Initializable {
     private Label reservation_total;
 
 
+
     private Connection connect;
     private PreparedStatement prepare;
     private Statement statement;
@@ -146,6 +146,7 @@ public class DashboardController implements Initializable {
             reservation_form.setVisible(false);
 
             availableServiceShowList();
+            availableServicesStatus();
 
             home_Button.setStyle("-fx-background-color: transparent");
             availableServices_Button.setStyle("-fx-background-color: red");
@@ -184,6 +185,73 @@ public class DashboardController implements Initializable {
         }
     }
 
+    String listStatus[] = {"Available","Not available"};
+    public void availableServicesStatus() {
+        List<String> listStatusService = new ArrayList<>();
+        for(String data: listStatus) {
+            listStatusService.add(data);
+        }
+        ObservableList listService = FXCollections.observableArrayList(listStatusService);
+        availableService_serviceStatus.setItems(listService);
+    }
+
+    public void availableServices_Add() {
+        String sql = "INSERT INTO services (service_Name,service_Price,service_Date,service_Status)" + "VALUES (?,?,?,?)";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+
+            Alert alert;
+            if(availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
+                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null ) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blanks fields");
+                alert.showAndWait();
+            } else {
+
+                String checkData = "SELECT service_Name from services WHERE service_Name = '" + availableService_serviceName.getText().isEmpty() + "'";
+                statement = connect.createStatement();
+                result = statement.executeQuery(checkData);
+
+                if(result.next()) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("This service exist");
+                    alert.showAndWait();
+                }
+                else {
+
+                    prepare = connect.prepareStatement(sql);
+                    prepare.setString(1, availableService_serviceName.getText());
+                    prepare.setString(2, availableService_servicePrice.getText());
+
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                    prepare.setString(3, String.valueOf(sqlDate));
+                    prepare.setString(4, String.valueOf(availableService_serviceStatus.getSelectionModel().getSelectedItem()));
+
+                    prepare.executeUpdate();
+                    availableServiceShowList();
+                    availableServicesClear();
+                }
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void availableServicesClear() {
+        availableService_serviceName.setText("");
+        availableService_servicePrice.setText("");
+        availableService_serviceStatus.getSelectionModel().clearSelection();
+
+    }
+
     public ObservableList<Service> availableServices() {
 
         String sql = "SELECT * FROM services";
@@ -196,7 +264,7 @@ public class DashboardController implements Initializable {
             Service service;
 
             while (result.next()) {
-                service  = new Service(result.getInt("service_Id"),result.getString("service_Name"),result.getDouble("service_price"),result.getDate("service_Date"));
+                service  = new Service(result.getString("service_Name"),result.getDouble("service_price"),result.getDate("service_Date"),result.getString("service_Status"));
                 listData.add(service);
             }
 
@@ -210,9 +278,9 @@ public class DashboardController implements Initializable {
     public void availableServiceShowList() {
         availableServicesList = availableServices();
 
-        availableService_IDColumn.setCellValueFactory(new PropertyValueFactory<>("service_Id"));
         availableService_NameColumn.setCellValueFactory(new PropertyValueFactory<>("service_Name"));
         availableService_PriceColumn.setCellValueFactory(new PropertyValueFactory<>("service_Price"));
+        availableService_StatusColumn.setCellValueFactory(new PropertyValueFactory<>("service_Status"));
 
         availableService_tableView.setItems(availableServicesList);
     }
@@ -220,5 +288,6 @@ public class DashboardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         availableServiceShowList();
+        availableServicesStatus();
     }
 }

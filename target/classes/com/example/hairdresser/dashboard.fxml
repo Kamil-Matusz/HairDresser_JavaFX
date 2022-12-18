@@ -68,7 +68,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" prefHeight="128.0" prefWidth="710.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -143,7 +143,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="23.0" layoutY="20.0" prefHeight="532.0" prefWidth="236.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -151,16 +151,16 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <Label alignment="CENTER" layoutX="20.0" layoutY="51.0" prefHeight="17.0" prefWidth="70.0" text="Service ID :" />
-                                    <TextField fx:id="availableService_serviceID" layoutX="17.0" layoutY="80.0" styleClass="text-field" stylesheets="@dashboard.css" />
-                                    <Label alignment="CENTER" layoutX="17.0" layoutY="133.0" prefHeight="17.0" prefWidth="90.0" text="Service Name :" />
-                                    <TextField fx:id="availableService_serviceName" layoutX="17.0" layoutY="162.0" styleClass="text-field" stylesheets="@dashboard.css" />
-                                    <Button fx:id="availableService_addButton" layoutX="23.0" layoutY="349.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="79.0" styleClass="add-button" stylesheets="@dashboard.css" text="Add" />
+                                    <Label alignment="CENTER" layoutX="18.0" layoutY="29.0" prefHeight="17.0" prefWidth="90.0" text="Service Name :" />
+                                    <TextField fx:id="availableService_serviceName" layoutX="17.0" layoutY="57.0" styleClass="text-field" stylesheets="@dashboard.css" />
+                                    <Button fx:id="availableService_addButton" layoutX="23.0" layoutY="349.0" mnemonicParsing="false" onAction="#availableServices_Add" prefHeight="64.0" prefWidth="79.0" styleClass="add-button" stylesheets="@dashboard.css" text="Add" />
                                     <Button fx:id="availableService_updateButton" layoutX="128.0" layoutY="349.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="79.0" styleClass="update-button" stylesheets="@dashboard.css" text="Update" />
                                     <Button fx:id="availableService_clearButton" layoutX="23.0" layoutY="440.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="79.0" styleClass="clear-button" stylesheets="@dashboard.css" text="Clear" />
                                     <Button fx:id="availableService_deleteButton" layoutX="128.0" layoutY="440.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="79.0" styleClass="delete-button" stylesheets="@dashboard.css" text="Delete" />
-                                    <Label alignment="CENTER" layoutX="17.0" layoutY="230.0" prefHeight="17.0" prefWidth="51.0" text="Price :" />
-                                    <TextField fx:id="availableService_servicePrice" layoutX="17.0" layoutY="259.0" promptText="\$0.0" styleClass="text-field" stylesheets="@dashboard.css" />
+                                    <Label alignment="CENTER" layoutX="17.0" layoutY="110.0" prefHeight="17.0" prefWidth="51.0" text="Price :" />
+                                    <TextField fx:id="availableService_servicePrice" layoutX="17.0" layoutY="146.0" promptText="\$0.0" styleClass="text-field" stylesheets="@dashboard.css" />
+                                    <Label alignment="CENTER" layoutX="23.0" layoutY="194.0" prefHeight="17.0" prefWidth="56.0" text="Status : " />
+                                    <ComboBox fx:id="availableService_serviceStatus" layoutX="17.0" layoutY="225.0" onAction="#availableServicesStatus" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="289.0" layoutY="20.0" prefHeight="532.0" prefWidth="427.0" stylesheets="@dashboard.css">
@@ -172,10 +172,9 @@
                                     <TextField fx:id="availableService_search" layoutX="14.0" layoutY="14.0" promptText="Search :" styleClass="search" stylesheets="@dashboard.css" />
                                     <TableView fx:id="availableService_tableView" layoutX="15.0" layoutY="66.0" prefHeight="442.0" prefWidth="399.0" styleClass="tabble-view" stylesheets="@dashboard.css">
                                       <columns>
-                                        <TableColumn prefWidth="94.0" text="Service ID" />
-                                        <TableColumn fx:id="availableService_NameColumn" prefWidth="178.0" text="Service Name" />
-                                          <TableColumn fx:id="availableService_PriceColumn" prefWidth="143.0" text="Price" />
-                                          <TableColumn prefWidth="94.0" text="Service ID" />
+                                        <TableColumn fx:id="availableService_NameColumn" prefWidth="131.0" text="Service Name" />
+                                          <TableColumn fx:id="availableService_PriceColumn" prefWidth="117.0" text="Price" />
+                                          <TableColumn fx:id="availableService_StatusColumn" prefWidth="167.0" text="Status" />
                                       </columns>
                                     </TableView>
                                  </children>
