@@ -235,6 +235,13 @@ public class DashboardController implements Initializable {
                     prepare.setString(4, String.valueOf(availableService_serviceStatus.getSelectionModel().getSelectedItem()));
 
                     prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Services succesfully added");
+                    alert.showAndWait();
+
                     availableServiceShowList();
                     availableServicesClear();
                 }
@@ -243,6 +250,15 @@ public class DashboardController implements Initializable {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void availableServicesSelect() {
+        Service service = availableService_tableView.getSelectionModel().getSelectedItem();
+        int number = availableService_tableView.getSelectionModel().getSelectedIndex();
+        if((number-1) < -1) return;
+        availableService_serviceName.setText(service.getService_Name());
+        availableService_servicePrice.setText(String.valueOf(service.getService_Price()));
+
     }
 
     public void availableServicesClear() {
