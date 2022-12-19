@@ -252,6 +252,77 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public void availableServicesUpdate() {
+        String sql = "UPDATE services SET service_Name = \"" + availableService_serviceName.getText() + "\", service_Price = '" + availableService_servicePrice.getText() + "', service_Status = '" + availableService_serviceStatus.getSelectionModel().getSelectedItem() + "'" +
+                "WHERE service_Name = \"" + availableService_serviceName.getText() + "\"";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            Alert alert;
+            if(availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
+                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null ) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blanks fields");
+                alert.showAndWait();
+            }
+            else {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure to Update ?");
+               Optional<ButtonType> option = alert.showAndWait();
+
+               if(option.get().equals(ButtonType.OK)) {
+                   statement = connect.createStatement();
+                   statement.executeUpdate(sql);
+
+                   alert = new Alert(Alert.AlertType.INFORMATION);
+                   alert.setTitle("Information message");
+                   alert.setHeaderText(null);
+                   alert.setContentText("Successfully Updated!");
+                   alert.showAndWait();
+
+                   availableServiceShowList();
+                   availableServicesClear();
+               }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void availableServicesDelete() {
+        String sql = "DELETE FROM services WHERE service_Name = \"" + availableService_serviceName.getText() + "\"";
+        connect = DatabaseConnection.connectDB();
+        try {
+            Alert alert;
+
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure to Delete ?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(sql);
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Deleted!");
+                    alert.showAndWait();
+
+                    availableServiceShowList();
+                    availableServicesClear();
+                }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void availableServicesSelect() {
         Service service = availableService_tableView.getSelectionModel().getSelectedItem();
         int number = availableService_tableView.getSelectionModel().getSelectedIndex();
