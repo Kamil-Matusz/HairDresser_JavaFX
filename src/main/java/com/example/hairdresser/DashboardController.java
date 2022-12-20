@@ -1,7 +1,10 @@
 package com.example.hairdresser;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,6 +165,27 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public void availableServicesSearch() {
+        FilteredList<Service> filter = new FilteredList<>(availableServicesList, e-> true);
+
+        availableService_search.textProperty().addListener((Observable,oldValue,newValue) -> {
+            filter.setPredicate(PredicateService ->{
+                if(newValue.isEmpty() || newValue == null) {
+                    return true;
+                }
+                String searchKey = newValue.toLowerCase();
+                if(PredicateService.getService_Name().contains((searchKey))) {
+                    return  true;
+                }else {
+                    return false;
+                }
+            } );
+        });
+        SortedList<Service> sortList = new SortedList<>(filter);
+        sortList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
+        availableService_tableView.setItems(sortList);
+    }
+
     public void logout() {
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -244,6 +268,7 @@ public class DashboardController implements Initializable {
 
                     availableServiceShowList();
                     availableServicesClear();
+                    availableServicesSearch();
                 }
             }
 
