@@ -97,13 +97,13 @@ public class DashboardController implements Initializable {
     private AnchorPane reservation_form;
 
     @FXML
-    private TableColumn<?, ?> reservation_priceColumn;
+    private TableColumn<Reservation, String> reservation_priceColumn;
 
     @FXML
-    private Spinner<?> reservation_quantity;
+    private Spinner<Integer> reservation_quantity;
 
     @FXML
-    private TableColumn<?, ?> reservation_quantityColumn;
+    private TableColumn<Reservation, String> reservation_quantityColumn;
 
     @FXML
     private Button reservation_reserveButton;
@@ -112,20 +112,25 @@ public class DashboardController implements Initializable {
     private ComboBox<?> reservation_serviceID;
 
     @FXML
-    private TableColumn<?, ?> reservation_serviceIDColumn;
+    private TableColumn<Reservation, String> reservation_serviceIDColumn;
 
     @FXML
     private ComboBox<?> reservation_serviceName;
 
     @FXML
-    private TableColumn<?, ?> reservation_serviceNameColumn;
+    private TableColumn<Reservation, String> reservation_serviceNameColumn;
 
     @FXML
-    private TableView<?> reservation_tableView;
+    private TableView<Reservation> reservation_tableView;
 
     @FXML
     private Label reservation_total;
 
+    @FXML
+    private TableColumn<Reservation, String> reservation_dateColumn;
+
+    @FXML
+    private Button reservation_addToReservationButton;
 
 
     private Connection connect;
@@ -162,6 +167,11 @@ public class DashboardController implements Initializable {
             home_Button.setStyle("-fx-background-color: transparent");
             availableServices_Button.setStyle("-fx-background-color: transprarent");
             reservation_Button.setStyle("-fx-background-color: red");
+
+            reservationShowList();
+            reservationServiceId();
+            reservationServiceName();
+            reservationSpinner();
         }
     }
 
@@ -376,7 +386,7 @@ public class DashboardController implements Initializable {
             Service service;
 
             while (result.next()) {
-                service  = new Service(result.getString("service_Name"),result.getDouble("service_price"),result.getDate("service_Date"),result.getString("service_Status"));
+                service  = new Service(result.getString("service_Name"),result.getDouble("service_Price"),result.getDate("service_Date"),result.getString("service_Status"));
                 listData.add(service);
             }
 
@@ -397,9 +407,146 @@ public class DashboardController implements Initializable {
         availableService_tableView.setItems(availableServicesList);
     }
 
+
+    private int userId;
+    public void reservationUserId() {
+        String sql = "SELECT MAX(user_Id) FROM reservations";
+        connect = DatabaseConnection.connectDB();
+
+        try {
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+            if(result.next()) {
+                userId = result.getInt("Max(user_Id)");
+            }
+
+            int count = 0;
+            String checkInfo = "SELECT MAX(customer_Id) FROM customers";
+            prepare = connect.prepareStatement(checkInfo);
+            result = prepare.executeQuery();
+
+            if(result.next()) {
+                count = result.getInt("Max(customer_Id");
+            }
+
+            if(userId == 0) {
+                userId +=1;
+            }
+            else if(userId == count) {
+                userId = count +1;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void reservationServiceId() {
+        String sql = "SELECT service_Id,service_Status FROM services WHERE service_Status = 'Available'";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            ObservableList listData = FXCollections.observableArrayList();
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+            while (result.next()) {
+                listData.add(result.getInt("service_Id"));
+            }
+            reservation_serviceID.setItems(listData);
+            reservationServiceName();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reservationServiceName() {
+        String sql = "SELECT service_Id,service_Name from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
+        connect = DatabaseConnection.connectDB();
+        try {
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            ObservableList listData = FXCollections.observableArrayList();
+            while (result.next()) {
+                listData.add(result.getString("service_Name"));
+            }
+            reservation_serviceName.setItems(listData);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private SpinnerValueFactory<Integer> spinner;
+    public void reservationSpinner() {
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,10,1);
+        reservation_quantity.setValueFactory(spinner);
+    }
+
+    private int qty;
+    public void reservationQuantity() {
+        qty = reservation_quantity.getValue();
+    }
+
+
+    public ObservableList<Reservation> reservationsListData() {
+        reservationUserId();
+        ObservableList<Reservation> list = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM customers WHERE customer_Id = '" +userId+"'";
+
+        connect = DatabaseConnection.connectDB();
+
+        try {
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            Reservation reservation;
+            while (result.next()) {
+                reservation = new Reservation(result.getInt("user_Id"),result.getInt("service_Id"),result.getString("reservation_Name"),
+                        result.getInt("reservation_Quantity"),result.getDouble("reservation_Price"),result.getDate("reservation_Date"));
+                list.add(reservation);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void addToReservations() {
+        reservationUserId();
+        String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date)" +
+                "VALUES(?,?,?,?,?,?)";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            String data = "SELECT * FROM services";
+            prepare = connect.prepareStatement(sql);
+            prepare.setString(1,String.valueOf(userId));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ObservableList<Reservation> reservationsList;
+    public void reservationShowList() {
+        reservationsList = reservationsListData();
+
+        reservation_serviceNameColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Name"));
+        reservation_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Quantity"));
+        reservation_priceColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Price"));
+        reservation_dateColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Date"));
+
+        reservation_tableView.setItems(reservationsList);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         availableServiceShowList();
         availableServicesStatus();
+        reservationShowList();
+        reservationServiceId();
+        reservationServiceName();
+        reservationSpinner();
     }
 }

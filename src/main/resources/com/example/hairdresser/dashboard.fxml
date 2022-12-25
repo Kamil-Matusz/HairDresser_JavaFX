@@ -143,7 +143,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="availableService_form" layoutX="207.0" layoutY="104.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="23.0" layoutY="20.0" prefHeight="532.0" prefWidth="236.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -181,7 +181,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="reservation_form" layoutX="148.0" layoutY="133.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="reservation_form" layoutX="148.0" layoutY="133.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane fx:id="rese" layoutX="13.0" layoutY="25.0" prefHeight="523.0" prefWidth="711.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -189,26 +189,20 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <AnchorPane prefHeight="163.0" prefWidth="711.0" stylesheets="@dashboard.css">
+                                    <AnchorPane prefHeight="194.0" prefWidth="711.0" stylesheets="@dashboard.css">
                                        <styleClass>
                                           <String fx:value="white-form" />
                                           <String fx:value="shadow" />
                                        </styleClass>
                                        <children>
-                                          <Label layoutX="14.0" layoutY="27.0" text="Service ID :">
+                                          <Label layoutX="17.0" layoutY="69.0" text="Service Name :">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="reservation_serviceID" layoutX="174.0" layoutY="27.0" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
-                                          <Label layoutX="14.0" layoutY="71.0" text="Service Name :">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                          </Label>
-                                          <ComboBox fx:id="reservation_serviceName" layoutX="174.0" layoutY="71.0" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
-                                          <Spinner fx:id="reservation_quantity" layoutX="175.0" layoutY="116.0" styleClass="text-field" stylesheets="@dashboard.css" />
-                                          <Label layoutX="23.0" layoutY="120.0" text="Quantity :">
+                                          <ComboBox fx:id="reservation_serviceName" layoutX="177.0" layoutY="69.0" onAction="#reservationServiceName" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <Spinner fx:id="reservation_quantity" layoutX="172.0" layoutY="112.0" onMouseClicked="#reservationQuantity" styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <Label layoutX="20.0" layoutY="116.0" text="Quantity :">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -224,14 +218,21 @@
                                              </font>
                                           </Label>
                                           <Button fx:id="reservation_reserveButton" layoutX="415.0" layoutY="104.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="192.0" styleClass="add-button" stylesheets="@dashboard.css" text="Complete Reservation" />
+                                          <Label layoutX="17.0" layoutY="24.0" text="Service ID:">
+                                             <font>
+                                                <Font size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="reservation_serviceID" layoutX="177.0" layoutY="24.0" onAction="#reservationServiceId" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <Button fx:id="reservation_addToReservationButton" layoutX="28.0" layoutY="155.0" mnemonicParsing="false" styleClass="update-button" stylesheets="@dashboard.css" text="Add to reservation" />
                                        </children>
                                     </AnchorPane>
-                                    <TableView fx:id="reservation_tableView" layoutX="14.0" layoutY="181.0" prefHeight="321.0" prefWidth="686.0">
+                                    <TableView fx:id="reservation_tableView" layoutX="14.0" layoutY="205.0" prefHeight="297.0" prefWidth="686.0">
                                       <columns>
-                                        <TableColumn fx:id="reservation_serviceIDColumn" prefWidth="135.0" text="Service ID" />
                                         <TableColumn fx:id="reservation_serviceNameColumn" prefWidth="223.0" text="Service Name" />
                                           <TableColumn fx:id="reservation_quantityColumn" prefWidth="199.0" text="Quantity" />
                                           <TableColumn fx:id="reservation_priceColumn" prefWidth="129.0" text="Price" />
+                                          <TableColumn fx:id="reservation_dateColumn" prefWidth="135.0" text="Date" />
                                       </columns>
                                     </TableView>
                                  </children>
