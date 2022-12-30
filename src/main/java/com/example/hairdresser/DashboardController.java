@@ -172,6 +172,7 @@ public class DashboardController implements Initializable {
             reservationServiceId();
             reservationServiceName();
             reservationSpinner();
+            reservationDisplayTotal();
         }
     }
 
@@ -421,12 +422,12 @@ public class DashboardController implements Initializable {
             }
 
             int count = 0;
-            String checkInfo = "SELECT MAX(customer_Id) FROM customers";
+            String checkInfo = "SELECT MAX(customer_Id) FROM customer_info";
             prepare = connect.prepareStatement(checkInfo);
             result = prepare.executeQuery();
 
             if(result.next()) {
-                count = result.getInt("Max(customer_Id");
+                count = result.getInt("MAX(customer_Id)");
             }
 
             if(userId == 0) {
@@ -493,7 +494,7 @@ public class DashboardController implements Initializable {
         reservationUserId();
         ObservableList<Reservation> list = FXCollections.observableArrayList();
 
-        String sql = "SELECT * FROM customers WHERE customer_Id = '" +userId+"'";
+        String sql = "SELECT * FROM customer_info WHERE customer_Id = '" +userId+"'";
 
         connect = DatabaseConnection.connectDB();
 
@@ -520,9 +521,106 @@ public class DashboardController implements Initializable {
 
         connect = DatabaseConnection.connectDB();
         try {
-            String data = "SELECT * FROM services";
+
+            Alert alert;
+            if(reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please choose the service");
+                alert.showAndWait();
+            } else {
+
+                double price = 0;
+                double totalPrice;
+                String priceValue = "SELECT service_Name,service_Price FROM services WHERE service_Name = \"" + reservation_serviceName.getSelectionModel().getSelectedItem() + "\"";
+                statement = connect.createStatement();
+                result = statement.executeQuery(priceValue);
+                if (result.next()) {
+                    price = result.getDouble("service_Price");
+                }
+
+                prepare = connect.prepareStatement(sql);
+                prepare.setString(1, String.valueOf(userId));
+                prepare.setInt(2, (Integer) reservation_serviceID.getSelectionModel().getSelectedItem());
+                prepare.setString(3, (String) reservation_serviceName.getSelectionModel().getSelectedItem());
+                prepare.setString(4, String.valueOf(qty));
+
+                totalPrice = (price * qty);
+                prepare.setString(5, String.valueOf(totalPrice));
+
+                Date date = new Date();
+                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                prepare.setString(6, String.valueOf(sqlDate));
+
+                prepare.executeUpdate();
+                reservationsListData();
+                reservationDisplayTotal();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private double totalPrice = 0;
+    public void reservationDisplayTotal() {
+        reservationUserId();
+        String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE user_Id = '" + userId+"'";
+
+        connect = DatabaseConnection.connectDB();
+        try {
             prepare = connect.prepareStatement(sql);
-            prepare.setString(1,String.valueOf(userId));
+
+            if(result.next()) {
+                totalPrice = result.getDouble("SUM(reservation_Price)");
+                reservation_total.setText("$" + String.valueOf(totalPrice));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reservationReserve() {
+        String sql = "INSERT INTO customer_info (customer_Id,total,date) VALUES (?,?,?)";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            Alert alert;
+            if(totalPrice == 0) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error message");
+                alert.setHeaderText(null);
+                alert.setContentText("Something was wrong");
+                alert.showAndWait();
+            }else {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are yo sure?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if(option.get().equals(ButtonType.OK)) {
+
+                    prepare = connect.prepareStatement(sql);
+                    prepare.setString(1, String.valueOf(userId));
+                    prepare.setString(2, String.valueOf(totalPrice));
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    prepare.setString(3, String.valueOf(sqlDate));
+                    prepare.executeUpdate();
+
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Reserved!");
+                    alert.showAndWait();
+                    totalPrice = 0;
+
+                }
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -538,6 +636,23 @@ public class DashboardController implements Initializable {
         reservation_dateColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Date"));
 
         reservation_tableView.setItems(reservationsList);
+    }
+
+    public void homeAS() {
+        String sql = "SELECT COUNT(service_Id) FROM services WHERE service_Status = 'Available'";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            int countAS = 0;
+            statement = connect.createStatement();
+            result = statement.executeQuery(sql);
+            if (result.next()) {
+                countAS = result.getInt("COUNT(service_Id)");
+            }
+            home_availableServices.setText(String.valueOf(countAS));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

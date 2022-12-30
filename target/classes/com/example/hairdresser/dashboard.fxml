@@ -189,7 +189,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <AnchorPane prefHeight="163.0" prefWidth="711.0" stylesheets="@dashboard.css">
+                                    <AnchorPane prefHeight="194.0" prefWidth="711.0" stylesheets="@dashboard.css">
                                        <styleClass>
                                           <String fx:value="white-form" />
                                           <String fx:value="shadow" />
@@ -224,9 +224,10 @@
                                              </font>
                                           </Label>
                                           <ComboBox fx:id="reservation_serviceID" layoutX="177.0" layoutY="24.0" onAction="#reservationServiceId" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <Button fx:id="reservation_addToReservationButton" layoutX="28.0" layoutY="155.0" mnemonicParsing="false" onAction="#addToReservations" styleClass="update-button" stylesheets="@dashboard.css" text="Add to reservation" />
                                        </children>
                                     </AnchorPane>
-                                    <TableView fx:id="reservation_tableView" layoutX="14.0" layoutY="181.0" prefHeight="321.0" prefWidth="686.0">
+                                    <TableView fx:id="reservation_tableView" layoutX="14.0" layoutY="205.0" prefHeight="297.0" prefWidth="686.0">
                                       <columns>
                                         <TableColumn fx:id="reservation_serviceNameColumn" prefWidth="223.0" text="Service Name" />
                                           <TableColumn fx:id="reservation_quantityColumn" prefWidth="199.0" text="Quantity" />
