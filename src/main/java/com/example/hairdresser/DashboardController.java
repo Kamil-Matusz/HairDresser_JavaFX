@@ -148,6 +148,10 @@ public class DashboardController implements Initializable {
             availableServices_Button.setStyle("-fx-background-color: transprarent");
             reservation_Button.setStyle("-fx-background-color: transprarent");
 
+            homeAS();
+            homeTR();
+            homeTP();
+
         }else if(event.getSource() == availableServices_Button) {
             home_form.setVisible(false);
             availableService_form.setVisible(true);
@@ -494,7 +498,7 @@ public class DashboardController implements Initializable {
         reservationUserId();
         ObservableList<Reservation> list = FXCollections.observableArrayList();
 
-        String sql = "SELECT * FROM customer_info WHERE customer_Id = '" +userId+"'";
+        String sql = "SELECT * FROM reservations WHERE user_Id = '" +userId+"'";
 
         connect = DatabaseConnection.connectDB();
 
@@ -556,6 +560,7 @@ public class DashboardController implements Initializable {
 
                 prepare.executeUpdate();
                 reservationsListData();
+                reservationShowList();
                 reservationDisplayTotal();
             }
         }catch (Exception e) {
@@ -655,10 +660,54 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public void homeTP(){
+        String sql = "SELECT  SUM(total) FROM customer_info";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            int countTR = 0;
+            statement = connect.createStatement();
+            result = statement.executeQuery(sql);
+
+            if(result.next()) {
+                countTR = result.getInt("SUM(total)");
+            }
+
+            home_total.setText("$" + String.valueOf(countTR));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void homeTR() {
+        String sql = "SELECT COUNT(id) FROM customer_info";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            int countTR = 0;
+            statement = connect.createStatement();
+            result = statement.executeQuery(sql);
+
+            if(result.next()) {
+                countTR = result.getInt("COUNT(id)");
+            }
+
+            home_totalReservation.setText(String.valueOf(countTR));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        homeAS();
+        homeTR();
+        homeTP();
+
         availableServiceShowList();
         availableServicesStatus();
+
         reservationShowList();
         reservationServiceId();
         reservationServiceName();

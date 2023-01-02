@@ -68,7 +68,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="home_form" layoutX="209.0" layoutY="150.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" prefHeight="128.0" prefWidth="710.0" stylesheets="@dashboard.css">
                                  <styleClass>
@@ -140,6 +140,13 @@
                                     <String fx:value="white-form" />
                                     <String fx:value="shadow" />
                                  </styleClass>
+                                 <children>
+                                    <ImageView fitHeight="284.0" fitWidth="554.0" layoutX="142.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@wallpaper.jpg" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
                               </AnchorPane>
                            </children>
                         </AnchorPane>
@@ -181,7 +188,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="reservation_form" layoutX="148.0" layoutY="133.0" prefHeight="571.0" prefWidth="743.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="reservation_form" layoutX="148.0" layoutY="133.0" prefHeight="571.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane fx:id="rese" layoutX="13.0" layoutY="25.0" prefHeight="523.0" prefWidth="711.0" stylesheets="@dashboard.css">
                                  <styleClass>
