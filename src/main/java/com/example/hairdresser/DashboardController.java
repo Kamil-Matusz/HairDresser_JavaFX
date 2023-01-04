@@ -139,6 +139,21 @@ public class DashboardController implements Initializable {
     private ResultSet result;
 
     public void switchForm(ActionEvent event) {
+
+        String role = new String();
+        String sql = "SELECT role FROM users";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+            statement = connect.createStatement();
+            result = statement.executeQuery(sql);
+            if (result.next()) {
+                role = result.getString("role");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if(event.getSource() == home_Button) {
             home_form.setVisible(true);
             availableService_form.setVisible(false);
@@ -152,7 +167,7 @@ public class DashboardController implements Initializable {
             homeTR();
             homeTP();
 
-        }else if(event.getSource() == availableServices_Button) {
+        }else if(event.getSource() == availableServices_Button && role == "admin") {
             home_form.setVisible(false);
             availableService_form.setVisible(true);
             reservation_form.setVisible(false);
@@ -163,7 +178,8 @@ public class DashboardController implements Initializable {
             home_Button.setStyle("-fx-background-color: transparent");
             availableServices_Button.setStyle("-fx-background-color: red");
             reservation_Button.setStyle("-fx-background-color: transprarent");
-        }else if(event.getSource() == reservation_Button) {
+
+        }else if(event.getSource() == reservation_Button && role == "user") {
             home_form.setVisible(false);
             availableService_form.setVisible(false);
             reservation_form.setVisible(true);
@@ -680,7 +696,7 @@ public class DashboardController implements Initializable {
     }
 
     public void homeTR() {
-        String sql = "SELECT COUNT(id) FROM customer_info";
+        String sql = "SELECT COUNT(reservation_Id) FROM reservations";
 
         connect = DatabaseConnection.connectDB();
         try {
@@ -689,7 +705,7 @@ public class DashboardController implements Initializable {
             result = statement.executeQuery(sql);
 
             if(result.next()) {
-                countTR = result.getInt("COUNT(id)");
+                countTR = result.getInt("COUNT(reservation_Id)");
             }
 
             home_totalReservation.setText(String.valueOf(countTR));
