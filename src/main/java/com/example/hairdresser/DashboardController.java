@@ -714,6 +714,17 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public void createPDF() {
+        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations";
+
+        connect = DatabaseConnection.connectDB();
+        try {
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
