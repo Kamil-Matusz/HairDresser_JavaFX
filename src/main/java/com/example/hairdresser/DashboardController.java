@@ -1,6 +1,8 @@
 package com.example.hairdresser;
 
-import javafx.beans.Observable;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.layout.Style;
+import com.itextpdf.text.Element;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,7 +17,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
+
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -139,22 +148,7 @@ public class DashboardController implements Initializable {
     private ResultSet result;
 
     public void switchForm(ActionEvent event) {
-
-        String role = new String();
-        String sql = "SELECT role FROM users";
-
-        connect = DatabaseConnection.connectDB();
-        try {
-            statement = connect.createStatement();
-            result = statement.executeQuery(sql);
-            if (result.next()) {
-                role = result.getString("role");
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if(event.getSource() == home_Button) {
+        if (event.getSource() == home_Button) {
             home_form.setVisible(true);
             availableService_form.setVisible(false);
             reservation_form.setVisible(false);
@@ -167,7 +161,7 @@ public class DashboardController implements Initializable {
             homeTR();
             homeTP();
 
-        }else if(event.getSource() == availableServices_Button && role == "admin") {
+        } else if (event.getSource() == availableServices_Button) {
             home_form.setVisible(false);
             availableService_form.setVisible(true);
             reservation_form.setVisible(false);
@@ -179,7 +173,7 @@ public class DashboardController implements Initializable {
             availableServices_Button.setStyle("-fx-background-color: red");
             reservation_Button.setStyle("-fx-background-color: transprarent");
 
-        }else if(event.getSource() == reservation_Button && role == "user") {
+        } else if (event.getSource() == reservation_Button) {
             home_form.setVisible(false);
             availableService_form.setVisible(false);
             reservation_form.setVisible(true);
@@ -349,6 +343,9 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Delete service from Database
+     */
     public void availableServicesDelete() {
         String sql = "DELETE FROM services WHERE service_Name = \"" + availableService_serviceName.getText() + "\"";
         connect = DatabaseConnection.connectDB();
@@ -388,6 +385,9 @@ public class DashboardController implements Initializable {
 
     }
 
+    /**
+     * Clearing values in fields
+     */
     public void availableServicesClear() {
         availableService_serviceName.setText("");
         availableService_servicePrice.setText("");
@@ -395,6 +395,10 @@ public class DashboardController implements Initializable {
 
     }
 
+    /**
+     * Retrieving a list of all services from the database
+     * @return List which containing all services with parameters
+     */
     public ObservableList<Service> availableServices() {
 
         String sql = "SELECT * FROM services";
@@ -417,6 +421,9 @@ public class DashboardController implements Initializable {
         return  listData;
     }
 
+    /**
+     *
+     */
     private ObservableList<Service> availableServicesList;
     public void availableServiceShowList() {
         availableServicesList = availableServices();
@@ -480,6 +487,9 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Retrieving the service name from the table based on its unique id
+     */
     public void reservationServiceName() {
         String sql = "SELECT service_Id,service_Name from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
         connect = DatabaseConnection.connectDB();
@@ -498,18 +508,28 @@ public class DashboardController implements Initializable {
 
     }
 
+    /**
+     * Setting the quantity of ordered services
+     */
     private SpinnerValueFactory<Integer> spinner;
     public void reservationSpinner() {
         spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,10,1);
         reservation_quantity.setValueFactory(spinner);
     }
 
+    /**
+     * Getting a numerical value from the Quantity field
+     */
     private int qty;
     public void reservationQuantity() {
         qty = reservation_quantity.getValue();
     }
 
 
+    /**
+     * Retrieving information about all available bookings
+     * @return list of reservations
+     */
     public ObservableList<Reservation> reservationsListData() {
         reservationUserId();
         ObservableList<Reservation> list = FXCollections.observableArrayList();
@@ -534,6 +554,9 @@ public class DashboardController implements Initializable {
         return list;
     }
 
+    /**
+     * Adding a reservation record to the appropriate table based on the form
+     */
     public void addToReservations() {
         reservationUserId();
         String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date)" +
@@ -583,13 +606,13 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
-
-
     private double totalPrice = 0;
+    Date date = new Date();
+    java.sql.Date todayDate = new java.sql.Date(date.getTime());
     public void reservationDisplayTotal() {
         reservationUserId();
-        String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE user_Id = '" + userId+"'";
-
+        //String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE user_Id = '" + userId+"'";
+        String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE WHERE reservation_Date = " + "'" + todayDate + "'";
         connect = DatabaseConnection.connectDB();
         try {
             prepare = connect.prepareStatement(sql);
@@ -659,6 +682,9 @@ public class DashboardController implements Initializable {
         reservation_tableView.setItems(reservationsList);
     }
 
+    /**
+     * Display count of all available services
+     */
     public void homeAS() {
         String sql = "SELECT COUNT(service_Id) FROM services WHERE service_Status = 'Available'";
 
@@ -676,8 +702,11 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Display money value of all made reservations
+     */
     public void homeTP(){
-        String sql = "SELECT  SUM(total) FROM customer_info";
+        String sql = "SELECT  SUM(reservation_Price) FROM reservations";
 
         connect = DatabaseConnection.connectDB();
         try {
@@ -686,7 +715,7 @@ public class DashboardController implements Initializable {
             result = statement.executeQuery(sql);
 
             if(result.next()) {
-                countTR = result.getInt("SUM(total)");
+                countTR = result.getInt("SUM(reservation_Price)");
             }
 
             home_total.setText("$" + String.valueOf(countTR));
@@ -695,6 +724,9 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Display number of all made reservations
+     */
     public void homeTR() {
         String sql = "SELECT COUNT(reservation_Id) FROM reservations";
 
@@ -714,11 +746,45 @@ public class DashboardController implements Initializable {
         }
     }
 
+    String reservation_Name;
+    int reservation_Quantity;
+    double reservation_Price;
+    Date reservation_Date;
+    /**
+     * Generate receipt to pdf file based on a record from the  reservations table
+     */
     public void createPDF() {
-        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations";
-
+        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations WHERE reservation_Date = " + "'" + todayDate +"'";
+        Alert alert;
+        Document document = new Document();
         connect = DatabaseConnection.connectDB();
+
         try {
+            PdfWriter writer = PdfWriter.getInstance(document,new FileOutputStream("D:\\Back-End\\Java\\Studia\\HairDresserSalon_JavaFX\\Receipts\\Receipt.pdf"));
+            document.open();
+
+            statement = connect.createStatement();
+            result = statement.executeQuery(sql);
+            if(result.next()) {
+                reservation_Name = result.getString("reservation_Name");
+                reservation_Quantity = result.getInt("reservation_Quantity");
+                reservation_Price  = result.getDouble("reservation_Price");
+                reservation_Date = result.getDate("reservation_Date");
+            }
+            document.add(new Paragraph("                                                                    HairDresserSalon"));
+            document.add(new Paragraph("----------------------------------------------------------------------------------------------------------------------------------"));
+            document.add(new Paragraph("Service Name: " + String.valueOf(reservation_Name)));
+            document.add(new Paragraph("Quantity: " + String.valueOf(reservation_Quantity)));
+            document.add(new Paragraph("Price: " + String.valueOf(reservation_Price)));
+            document.add(new Paragraph("Reservation Date: " + String.valueOf(reservation_Date)));
+            document.close();
+            writer.close();
+
+            alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information message");
+            alert.setHeaderText(null);
+            alert.setContentText("You reservation is complete! A receipt has been generated");
+            alert.showAndWait();
 
         }catch (Exception e) {
             e.printStackTrace();

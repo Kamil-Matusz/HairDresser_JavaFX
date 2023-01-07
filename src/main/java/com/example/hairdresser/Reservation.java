@@ -2,6 +2,9 @@ package com.example.hairdresser;
 
 import java.util.Date;
 
+/**
+ *  Represents a reservation in hairdresser
+ */
 public class Reservation {
     private int user_Id;
     private int service_Id;
@@ -10,7 +13,15 @@ public class Reservation {
     private double reservation_Price;
     private Date reservation_Date;
 
-
+    /**
+     * Creating new reservations with parametrs
+     * @param user_Id
+     * @param service_Id
+     * @param reservation_Name
+     * @param reservation_Quantity
+     * @param reservation_Price
+     * @param reservation_Date
+     */
     public Reservation(int user_Id,int service_Id,String reservation_Name, int reservation_Quantity,double reservation_Price, Date reservation_Date) {
         this.user_Id = user_Id;
         this.service_Id = service_Id;

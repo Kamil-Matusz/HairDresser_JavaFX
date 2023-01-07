@@ -16,6 +16,10 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ *  The class that manages the login panel
+ * @author Kamil Matusz
+ */
 public class HelloController {
     @FXML
     private Hyperlink signIn_createAccount;
@@ -55,6 +59,9 @@ public class HelloController {
     private Statement statement;
     private ResultSet result;
 
+    /**
+     *  A method that manages users' login to the database
+     */
     public void signIn() {
         String sql = "SELECT * FROM users WHERE username = ? and password = ?";
         connect = DatabaseConnection.connectDB();
@@ -63,7 +70,6 @@ public class HelloController {
             prepare = connect.prepareStatement(sql);
             prepare.setString(1,signIn_username.getText());
             prepare.setString(2,signIn_password.getText());
-            
             result = prepare.executeQuery();
 
             Alert alert;
@@ -105,9 +111,12 @@ public class HelloController {
         }
     }
 
+    /**
+     * Creating new user account and insert them to the database
+     */
     public void SignUp() {
-        String sql = "INSERT INTO users (username,email,password) VALUES (?,?,?)";
 
+        String sql = "INSERT INTO users (username,email,password) VALUES (?,?,?)";
         String sql_validation = "SELECT username FROM users";
 
         connect = DatabaseConnection.connectDB();
@@ -131,7 +140,8 @@ public class HelloController {
                 alert.setHeaderText(null);
                 alert.setContentText("Password is too low");
                 alert.showAndWait();
-            }else {
+            }
+            else {
 
                 if (vaildationEmail()) {
                     prepare = connect.prepareStatement(sql_validation);
@@ -161,6 +171,10 @@ public class HelloController {
         }
     }
 
+    /**
+     * Switching between the login and account creation panel
+     * @param event
+     */
     public void switchForms(ActionEvent event) {
         if(event.getSource() == signIn_createAccount) {
             signIn_form.setVisible(false);
@@ -171,6 +185,10 @@ public class HelloController {
         }
     }
 
+    /**
+     * Method which validate user email address
+     * @return true/false status indicating whether the email address meets the criteria
+     */
     public boolean vaildationEmail() {
         Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
         Alert alert;

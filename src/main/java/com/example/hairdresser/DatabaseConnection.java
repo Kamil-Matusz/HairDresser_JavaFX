@@ -2,6 +2,9 @@ package com.example.hairdresser;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+/**
+ * Class which contains handling to the database
+ */
 public class DatabaseConnection {
     public static Connection connectDB() {
         try {
