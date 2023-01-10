@@ -16,6 +16,11 @@ public class HelloApplication extends Application {
     private double x = 0;
     private double y = 0;
 
+    /**
+     * Launching the main application window
+     * @param stage
+     * @throws IOException
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("mainpanel.fxml"));

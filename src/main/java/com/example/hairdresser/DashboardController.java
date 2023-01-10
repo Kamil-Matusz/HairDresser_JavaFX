@@ -32,6 +32,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
+/**
+ * The class that manages the main application
+ * @author Kamil Matusz
+ */
 public class DashboardController implements Initializable {
     @FXML
     private TableColumn<Service, String> availableService_NameColumn;
@@ -422,7 +426,7 @@ public class DashboardController implements Initializable {
     }
 
     /**
-     *
+     * Displaying elements of the service class in a table
      */
     private ObservableList<Service> availableServicesList;
     public void availableServiceShowList() {
@@ -670,6 +674,9 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Displaying elements of the rservation class in a table
+     */
     private ObservableList<Reservation> reservationsList;
     public void reservationShowList() {
         reservationsList = reservationsListData();
