@@ -34,6 +34,7 @@ import java.util.*;
 
 /**
  * The class that manages the main application
+ *
  * @author Kamil Matusz
  */
 public class DashboardController implements Initializable {
@@ -195,26 +196,29 @@ public class DashboardController implements Initializable {
     }
 
     public void availableServicesSearch() {
-        FilteredList<Service> filter = new FilteredList<>(availableServicesList, e-> true);
+        FilteredList<Service> filter = new FilteredList<>(availableServicesList, e -> true);
 
-        availableService_search.textProperty().addListener((Observable,oldValue,newValue) -> {
-            filter.setPredicate(PredicateService ->{
-                if(newValue.isEmpty() || newValue == null) {
+        availableService_search.textProperty().addListener((Observable, oldValue, newValue) -> {
+            filter.setPredicate(PredicateService -> {
+                if (newValue.isEmpty() || newValue == null) {
                     return true;
                 }
                 String searchKey = newValue.toLowerCase();
-                if(PredicateService.getService_Name().contains((searchKey))) {
-                    return  true;
-                }else {
+                if (PredicateService.getService_Name().contains((searchKey))) {
+                    return true;
+                } else {
                     return false;
                 }
-            } );
+            });
         });
         SortedList<Service> sortList = new SortedList<>(filter);
         sortList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
         availableService_tableView.setItems(sortList);
     }
 
+    /**
+     * Logout option for user
+     */
     public void logout() {
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -223,31 +227,35 @@ public class DashboardController implements Initializable {
             alert.setContentText("Are you sure you want to logout?");
             Optional<ButtonType> option = alert.showAndWait();
 
-            if(option.get().equals(ButtonType.OK)) {
+            if (option.get().equals(ButtonType.OK)) {
 
                 logoutButton.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("mainpanel.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
                 Scene scene = new Scene(root);
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 stage.show();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    String listStatus[] = {"Available","Not available"};
+
+    String listStatus[] = {"Available", "Not available"};
     public void availableServicesStatus() {
         List<String> listStatusService = new ArrayList<>();
-        for(String data: listStatus) {
+        for (String data : listStatus) {
             listStatusService.add(data);
         }
         ObservableList listService = FXCollections.observableArrayList(listStatusService);
         availableService_serviceStatus.setItems(listService);
     }
 
+    /**
+     * Adding service for the database
+     */
     public void availableServices_Add() {
         String sql = "INSERT INTO services (service_Name,service_Price,service_Date,service_Status)" + "VALUES (?,?,?,?)";
 
@@ -255,8 +263,8 @@ public class DashboardController implements Initializable {
         try {
 
             Alert alert;
-            if(availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
-                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null ) {
+            if (availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
+                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
@@ -268,14 +276,13 @@ public class DashboardController implements Initializable {
                 statement = connect.createStatement();
                 result = statement.executeQuery(checkData);
 
-                if(result.next()) {
+                if (result.next()) {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error message");
                     alert.setHeaderText(null);
                     alert.setContentText("This service exist");
                     alert.showAndWait();
-                }
-                else {
+                } else {
 
                     prepare = connect.prepareStatement(sql);
                     prepare.setString(1, availableService_serviceName.getText());
@@ -301,11 +308,14 @@ public class DashboardController implements Initializable {
                 }
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Update record in database
+     */
     public void availableServicesUpdate() {
         String sql = "UPDATE services SET service_Name = \"" + availableService_serviceName.getText() + "\", service_Price = '" + availableService_servicePrice.getText() + "', service_Status = '" + availableService_serviceStatus.getSelectionModel().getSelectedItem() + "'" +
                 "WHERE service_Name = \"" + availableService_serviceName.getText() + "\"";
@@ -313,36 +323,35 @@ public class DashboardController implements Initializable {
         connect = DatabaseConnection.connectDB();
         try {
             Alert alert;
-            if(availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
-                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null ) {
+            if (availableService_serviceName.getText().isEmpty() || availableService_servicePrice.getText().isEmpty()
+                    || availableService_serviceStatus.getSelectionModel().getSelectedItem() == null) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
                 alert.setContentText("Please fill all blanks fields");
                 alert.showAndWait();
-            }
-            else {
+            } else {
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirm message");
                 alert.setHeaderText(null);
                 alert.setContentText("Are you sure to Update ?");
-               Optional<ButtonType> option = alert.showAndWait();
+                Optional<ButtonType> option = alert.showAndWait();
 
-               if(option.get().equals(ButtonType.OK)) {
-                   statement = connect.createStatement();
-                   statement.executeUpdate(sql);
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(sql);
 
-                   alert = new Alert(Alert.AlertType.INFORMATION);
-                   alert.setTitle("Information message");
-                   alert.setHeaderText(null);
-                   alert.setContentText("Successfully Updated!");
-                   alert.showAndWait();
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
 
-                   availableServiceShowList();
-                   availableServicesClear();
-               }
+                    availableServiceShowList();
+                    availableServicesClear();
+                }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -356,37 +365,39 @@ public class DashboardController implements Initializable {
         try {
             Alert alert;
 
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm message");
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure to Delete ?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                statement = connect.createStatement();
+                statement.executeUpdate(sql);
+
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information message");
                 alert.setHeaderText(null);
-                alert.setContentText("Are you sure to Delete ?");
-                Optional<ButtonType> option = alert.showAndWait();
+                alert.setContentText("Successfully Deleted!");
+                alert.showAndWait();
 
-                if (option.get().equals(ButtonType.OK)) {
-                    statement = connect.createStatement();
-                    statement.executeUpdate(sql);
-
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Deleted!");
-                    alert.showAndWait();
-
-                    availableServiceShowList();
-                    availableServicesClear();
-                }
-        }catch (Exception e) {
+                availableServiceShowList();
+                availableServicesClear();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Selecting a record from the table
+     */
     public void availableServicesSelect() {
         Service service = availableService_tableView.getSelectionModel().getSelectedItem();
         int number = availableService_tableView.getSelectionModel().getSelectedIndex();
-        if((number-1) < -1) return;
+        if ((number - 1) < -1) return;
         availableService_serviceName.setText(service.getService_Name());
         availableService_servicePrice.setText(String.valueOf(service.getService_Price()));
-
     }
 
     /**
@@ -396,7 +407,6 @@ public class DashboardController implements Initializable {
         availableService_serviceName.setText("");
         availableService_servicePrice.setText("");
         availableService_serviceStatus.getSelectionModel().clearSelection();
-
     }
 
     /**
@@ -415,20 +425,21 @@ public class DashboardController implements Initializable {
             Service service;
 
             while (result.next()) {
-                service  = new Service(result.getString("service_Name"),result.getDouble("service_Price"),result.getDate("service_Date"),result.getString("service_Status"));
+                service = new Service(result.getString("service_Name"), result.getDouble("service_Price"), result.getDate("service_Date"), result.getString("service_Status"));
                 listData.add(service);
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return  listData;
+        return listData;
     }
 
     /**
      * Displaying elements of the service class in a table
      */
     private ObservableList<Service> availableServicesList;
+
     public void availableServiceShowList() {
         availableServicesList = availableServices();
 
@@ -448,7 +459,7 @@ public class DashboardController implements Initializable {
         try {
             prepare = connect.prepareStatement(sql);
             result = prepare.executeQuery();
-            if(result.next()) {
+            if (result.next()) {
                 userId = result.getInt("Max(user_Id)");
             }
 
@@ -457,17 +468,16 @@ public class DashboardController implements Initializable {
             prepare = connect.prepareStatement(checkInfo);
             result = prepare.executeQuery();
 
-            if(result.next()) {
+            if (result.next()) {
                 count = result.getInt("MAX(customer_Id)");
             }
 
-            if(userId == 0) {
-                userId +=1;
+            if (userId == 0) {
+                userId += 1;
+            } else if (userId == count) {
+                userId = count + 1;
             }
-            else if(userId == count) {
-                userId = count +1;
-            }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -486,7 +496,7 @@ public class DashboardController implements Initializable {
             }
             reservation_serviceID.setItems(listData);
             reservationServiceName();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -506,7 +516,7 @@ public class DashboardController implements Initializable {
                 listData.add(result.getString("service_Name"));
             }
             reservation_serviceName.setItems(listData);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -517,7 +527,7 @@ public class DashboardController implements Initializable {
      */
     private SpinnerValueFactory<Integer> spinner;
     public void reservationSpinner() {
-        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,10,1);
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
         reservation_quantity.setValueFactory(spinner);
     }
 
@@ -538,7 +548,7 @@ public class DashboardController implements Initializable {
         reservationUserId();
         ObservableList<Reservation> list = FXCollections.observableArrayList();
 
-        String sql = "SELECT * FROM reservations WHERE user_Id = '" +userId+"'";
+        String sql = "SELECT * FROM reservations WHERE user_Id = '" + userId + "'";
 
         connect = DatabaseConnection.connectDB();
 
@@ -548,11 +558,11 @@ public class DashboardController implements Initializable {
 
             Reservation reservation;
             while (result.next()) {
-                reservation = new Reservation(result.getInt("user_Id"),result.getInt("service_Id"),result.getString("reservation_Name"),
-                        result.getInt("reservation_Quantity"),result.getDouble("reservation_Price"),result.getDate("reservation_Date"));
+                reservation = new Reservation(result.getInt("user_Id"), result.getInt("service_Id"), result.getString("reservation_Name"),
+                        result.getInt("reservation_Quantity"), result.getDouble("reservation_Price"), result.getDate("reservation_Date"));
                 list.add(reservation);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
@@ -570,7 +580,7 @@ public class DashboardController implements Initializable {
         try {
 
             Alert alert;
-            if(reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0) {
+            if (reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
@@ -606,13 +616,15 @@ public class DashboardController implements Initializable {
                 reservationShowList();
                 reservationDisplayTotal();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     private double totalPrice = 0;
     Date date = new Date();
     java.sql.Date todayDate = new java.sql.Date(date.getTime());
+
     public void reservationDisplayTotal() {
         reservationUserId();
         //String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE user_Id = '" + userId+"'";
@@ -621,11 +633,11 @@ public class DashboardController implements Initializable {
         try {
             prepare = connect.prepareStatement(sql);
 
-            if(result.next()) {
+            if (result.next()) {
                 totalPrice = result.getDouble("SUM(reservation_Price)");
                 reservation_total.setText("$" + String.valueOf(totalPrice));
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -636,20 +648,20 @@ public class DashboardController implements Initializable {
         connect = DatabaseConnection.connectDB();
         try {
             Alert alert;
-            if(totalPrice == 0) {
+            if (totalPrice == 0) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
                 alert.setContentText("Something was wrong");
                 alert.showAndWait();
-            }else {
+            } else {
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirm message");
                 alert.setHeaderText(null);
                 alert.setContentText("Are yo sure?");
                 Optional<ButtonType> option = alert.showAndWait();
 
-                if(option.get().equals(ButtonType.OK)) {
+                if (option.get().equals(ButtonType.OK)) {
 
                     prepare = connect.prepareStatement(sql);
                     prepare.setString(1, String.valueOf(userId));
@@ -669,7 +681,7 @@ public class DashboardController implements Initializable {
 
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -678,6 +690,7 @@ public class DashboardController implements Initializable {
      * Displaying elements of the rservation class in a table
      */
     private ObservableList<Reservation> reservationsList;
+
     public void reservationShowList() {
         reservationsList = reservationsListData();
 
@@ -704,7 +717,7 @@ public class DashboardController implements Initializable {
                 countAS = result.getInt("COUNT(service_Id)");
             }
             home_availableServices.setText(String.valueOf(countAS));
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -712,7 +725,7 @@ public class DashboardController implements Initializable {
     /**
      * Display money value of all made reservations
      */
-    public void homeTP(){
+    public void homeTP() {
         String sql = "SELECT  SUM(reservation_Price) FROM reservations";
 
         connect = DatabaseConnection.connectDB();
@@ -721,12 +734,12 @@ public class DashboardController implements Initializable {
             statement = connect.createStatement();
             result = statement.executeQuery(sql);
 
-            if(result.next()) {
+            if (result.next()) {
                 countTR = result.getInt("SUM(reservation_Price)");
             }
 
             home_total.setText("$" + String.valueOf(countTR));
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -743,12 +756,12 @@ public class DashboardController implements Initializable {
             statement = connect.createStatement();
             result = statement.executeQuery(sql);
 
-            if(result.next()) {
+            if (result.next()) {
                 countTR = result.getInt("COUNT(reservation_Id)");
             }
 
             home_totalReservation.setText(String.valueOf(countTR));
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -757,25 +770,26 @@ public class DashboardController implements Initializable {
     int reservation_Quantity;
     double reservation_Price;
     Date reservation_Date;
+
     /**
      * Generate receipt to pdf file based on a record from the  reservations table
      */
     public void createPDF() {
-        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations WHERE reservation_Date = " + "'" + todayDate +"'";
+        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations WHERE reservation_Date = " + "'" + todayDate + "'";
         Alert alert;
         Document document = new Document();
         connect = DatabaseConnection.connectDB();
 
         try {
-            PdfWriter writer = PdfWriter.getInstance(document,new FileOutputStream("D:\\Back-End\\Java\\Studia\\HairDresserSalon_JavaFX\\Receipts\\Receipt.pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("D:\\Back-End\\Java\\Studia\\HairDresserSalon_JavaFX\\Receipts\\Receipt.pdf"));
             document.open();
 
             statement = connect.createStatement();
             result = statement.executeQuery(sql);
-            if(result.next()) {
+            if (result.next()) {
                 reservation_Name = result.getString("reservation_Name");
                 reservation_Quantity = result.getInt("reservation_Quantity");
-                reservation_Price  = result.getDouble("reservation_Price");
+                reservation_Price = result.getDouble("reservation_Price");
                 reservation_Date = result.getDate("reservation_Date");
             }
             document.add(new Paragraph("                                                                    HairDresserSalon"));
@@ -793,11 +807,16 @@ public class DashboardController implements Initializable {
             alert.setContentText("You reservation is complete! A receipt has been generated");
             alert.showAndWait();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Method which initialize DashboardController
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

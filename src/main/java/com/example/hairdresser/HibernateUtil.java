@@ -11,8 +11,7 @@ public class HibernateUtil {
         try {
             //Create the session factory object.
             return new Configuration().configure().buildSessionFactory();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return sessionFactory;

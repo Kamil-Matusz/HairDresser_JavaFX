@@ -9,18 +9,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  The class that manages the login panel
+ * The class that manages the login panel
+ *
  * @author Kamil Matusz
  */
-public class HelloController {
+public class LoginController {
     @FXML
     private Hyperlink signIn_createAccount;
 
@@ -56,11 +54,12 @@ public class HelloController {
 
     private Connection connect;
     private PreparedStatement prepare;
+    private PreparedStatement prepare2;
     private Statement statement;
     private ResultSet result;
 
     /**
-     *  A method that manages users' login to the database
+     * A method that manages users' login to the database
      */
     public void signIn() {
         String sql = "SELECT * FROM users WHERE username = ? and password = ?";
@@ -68,21 +67,21 @@ public class HelloController {
 
         try {
             prepare = connect.prepareStatement(sql);
-            prepare.setString(1,signIn_username.getText());
-            prepare.setString(2,signIn_password.getText());
+            prepare.setString(1, signIn_username.getText());
+            prepare.setString(2, signIn_password.getText());
             result = prepare.executeQuery();
 
             Alert alert;
 
-            if(signIn_username.getText().isEmpty() || signIn_password.getText().isEmpty()) {
+            if (signIn_username.getText().isEmpty() || signIn_password.getText().isEmpty()) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
                 alert.setContentText("Please fill all blank fields");
                 alert.showAndWait();
 
-            }else {
-                if(result.next()) {
+            } else {
+                if (result.next()) {
                     alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Information Message");
                     alert.setHeaderText(null);
@@ -97,7 +96,7 @@ public class HelloController {
                     stage.setScene(scene);
                     stage.show();
 
-                }else {
+                } else {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
@@ -106,7 +105,7 @@ public class HelloController {
                 }
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -117,16 +116,10 @@ public class HelloController {
     public void SignUp() {
 
         String sql = "INSERT INTO users (username,email,password) VALUES (?,?,?)";
-        String sql_validation = "SELECT username FROM users";
+        String sql_validation = "SELECT COUNT(username) FROM users WHERE username= '" + signUp_username.getText() + "'";
 
         connect = DatabaseConnection.connectDB();
         try {
-
-            prepare = connect.prepareStatement(sql);
-            prepare.setString(1,signUp_username.getText());
-            prepare.setString(2,signUp_email.getText());
-            prepare.setString(3,signUp_password.getText());
-
             Alert alert;
             if(signUp_username.getText().isEmpty() || signUp_email.getText().isEmpty() || signUp_password.getText().isEmpty()) {
                 alert = new Alert(Alert.AlertType.ERROR);
@@ -142,18 +135,27 @@ public class HelloController {
                 alert.showAndWait();
             }
             else {
-
+                int usernameCount = 0;
                 if (vaildationEmail()) {
-                    prepare = connect.prepareStatement(sql_validation);
-                    result = prepare.executeQuery();
-
-                    if (result.next()) {
+                    statement = connect.createStatement();
+                    result = statement.executeQuery(sql_validation);
+                    if(result.next()) {
+                        usernameCount = result.getInt("COUNT(username)");
+                    }
+                    if(usernameCount !=0) {
                         alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error message");
                         alert.setHeaderText(null);
                         alert.setContentText("This username was already exist!");
-                    } else {
-
+                        alert.showAndWait();
+                        System.out.println("wiecej niz 0");
+                    }
+                    else {
+                        prepare = connect.prepareStatement(sql);
+                        prepare.setString(1,signUp_username.getText());
+                        prepare.setString(2,signUp_email.getText());
+                        prepare.setString(3,signUp_password.getText());
+                        prepare.execute();
                         alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Information Message");
                         alert.setHeaderText(null);
@@ -173,13 +175,14 @@ public class HelloController {
 
     /**
      * Switching between the login and account creation panel
+     *
      * @param event
      */
     public void switchForms(ActionEvent event) {
-        if(event.getSource() == signIn_createAccount) {
+        if (event.getSource() == signIn_createAccount) {
             signIn_form.setVisible(false);
             signUp_form.setVisible(true);
-        }else if(event.getSource() == signUp_alreadyHaveAccount) {
+        } else if (event.getSource() == signUp_alreadyHaveAccount) {
             signIn_form.setVisible(true);
             signUp_form.setVisible(false);
         }
@@ -187,16 +190,16 @@ public class HelloController {
 
     /**
      * Method which validate user email address
+     *
      * @return true/false status indicating whether the email address meets the criteria
      */
     public boolean vaildationEmail() {
         Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
         Alert alert;
         Matcher match = pattern.matcher(signUp_email.getText());
-        if(match.find() && match.group().matches(signUp_email.getText())) {
+        if (match.find() && match.group().matches(signUp_email.getText())) {
             return true;
-        }
-        else {
+        } else {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ErrorMessage");
             alert.setHeaderText(null);

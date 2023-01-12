@@ -18,13 +18,14 @@ public class HelloApplication extends Application {
 
     /**
      * Launching the main application window
+     *
      * @param stage
      * @throws IOException
      */
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("mainpanel.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1000, 1000);
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
         stage.setTitle("Hairdresser!");
         stage.setScene(scene);
         stage.show();

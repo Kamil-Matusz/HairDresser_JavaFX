@@ -70,9 +70,10 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.antlr:antlr4-runtime:4.10.1" level="project" />
     <orderEntry type="library" name="Maven: com.mysql:mysql-connector-j:8.0.31" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.19.4" level="project" />
-    <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
-    <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
-    <orderEntry type="library" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
     <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.13.2" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:layout:7.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:kernel:7.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:io:7.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.13" level="project" />
   </component>
 </module>
