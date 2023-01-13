@@ -146,6 +146,11 @@ public class DashboardController implements Initializable {
     @FXML
     private Button reservation_addToReservationButton;
 
+    @FXML
+    private TextField reservation_PhoneNumber;
+
+    @FXML
+    private TextField reservation_Email;
 
     private Connection connect;
     private PreparedStatement prepare;
@@ -191,6 +196,7 @@ public class DashboardController implements Initializable {
             reservationServiceId();
             reservationServiceName();
             reservationSpinner();
+            reservationServicePrice();
             reservationDisplayTotal();
         }
     }
@@ -450,7 +456,6 @@ public class DashboardController implements Initializable {
         availableService_tableView.setItems(availableServicesList);
     }
 
-
     private int userId;
     public void reservationUserId() {
         String sql = "SELECT MAX(user_Id) FROM reservations";
@@ -464,14 +469,6 @@ public class DashboardController implements Initializable {
             }
 
             int count = 0;
-            String checkInfo = "SELECT MAX(customer_Id) FROM customer_info";
-            prepare = connect.prepareStatement(checkInfo);
-            result = prepare.executeQuery();
-
-            if (result.next()) {
-                count = result.getInt("MAX(customer_Id)");
-            }
-
             if (userId == 0) {
                 userId += 1;
             } else if (userId == count) {
@@ -482,7 +479,9 @@ public class DashboardController implements Initializable {
         }
     }
 
-
+    /**
+     * Retrieving the unique service Id
+     */
     public void reservationServiceId() {
         String sql = "SELECT service_Id,service_Status FROM services WHERE service_Status = 'Available'";
 
@@ -521,7 +520,26 @@ public class DashboardController implements Initializable {
         }
 
     }
+    /**
+     * Retrieving the service price from the table based on its unique id
+     */
+    private double price = 0;
+    public void reservationServicePrice() {
+        reservationUserId();
+        String sql = "SELECT service_Id,service_Price from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
+        connect = DatabaseConnection.connectDB();
+        try {
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
 
+            if(result.next()) {
+                price = result.getDouble("service_Price");
+            }
+            reservation_total.setText(String.valueOf(price));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Setting the quantity of ordered services
      */
@@ -559,7 +577,7 @@ public class DashboardController implements Initializable {
             Reservation reservation;
             while (result.next()) {
                 reservation = new Reservation(result.getInt("user_Id"), result.getInt("service_Id"), result.getString("reservation_Name"),
-                        result.getInt("reservation_Quantity"), result.getDouble("reservation_Price"), result.getDate("reservation_Date"));
+                        result.getInt("reservation_Quantity"), result.getDouble("reservation_Price"), result.getDate("reservation_Date"),result.getString("phone_Number"),result.getString("email"));
                 list.add(reservation);
             }
         } catch (Exception e) {
@@ -573,8 +591,8 @@ public class DashboardController implements Initializable {
      */
     public void addToReservations() {
         reservationUserId();
-        String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date)" +
-                "VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date,phone_Number,email)" +
+                "VALUES(?,?,?,?,?,?,?,?)";
 
         connect = DatabaseConnection.connectDB();
         try {
@@ -610,8 +628,15 @@ public class DashboardController implements Initializable {
                 java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
                 prepare.setString(6, String.valueOf(sqlDate));
-
+                prepare.setString(7,String.valueOf(reservation_PhoneNumber.getText()));
+                prepare.setString(8,String.valueOf(reservation_Email.getText()));
                 prepare.executeUpdate();
+
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Creating reservation!");
+                alert.showAndWait();
                 reservationsListData();
                 reservationShowList();
                 reservationDisplayTotal();
@@ -627,7 +652,6 @@ public class DashboardController implements Initializable {
 
     public void reservationDisplayTotal() {
         reservationUserId();
-        //String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE user_Id = '" + userId+"'";
         String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE WHERE reservation_Date = " + "'" + todayDate + "'";
         connect = DatabaseConnection.connectDB();
         try {
@@ -642,52 +666,8 @@ public class DashboardController implements Initializable {
         }
     }
 
-    public void reservationReserve() {
-        String sql = "INSERT INTO customer_info (customer_Id,total,date) VALUES (?,?,?)";
-
-        connect = DatabaseConnection.connectDB();
-        try {
-            Alert alert;
-            if (totalPrice == 0) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error message");
-                alert.setHeaderText(null);
-                alert.setContentText("Something was wrong");
-                alert.showAndWait();
-            } else {
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm message");
-                alert.setHeaderText(null);
-                alert.setContentText("Are yo sure?");
-                Optional<ButtonType> option = alert.showAndWait();
-
-                if (option.get().equals(ButtonType.OK)) {
-
-                    prepare = connect.prepareStatement(sql);
-                    prepare.setString(1, String.valueOf(userId));
-                    prepare.setString(2, String.valueOf(totalPrice));
-                    Date date = new Date();
-                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-                    prepare.setString(3, String.valueOf(sqlDate));
-                    prepare.executeUpdate();
-
-
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Reserved!");
-                    alert.showAndWait();
-                    totalPrice = 0;
-
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
-     * Displaying elements of the rservation class in a table
+     * Displaying elements of the reservation class in a table
      */
     private ObservableList<Reservation> reservationsList;
 
@@ -831,5 +811,6 @@ public class DashboardController implements Initializable {
         reservationServiceId();
         reservationServiceName();
         reservationSpinner();
+        reservationDisplayTotal();
     }
 }

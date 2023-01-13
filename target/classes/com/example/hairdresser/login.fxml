@@ -10,7 +10,7 @@
 
 <AnchorPane maxHeight="600.0" maxWidth="1000.0" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hairdresser.LoginController">
     <children>
-        <AnchorPane fx:id="signIn_form" layoutY="1.0" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane fx:id="signIn_form" layoutY="1.0" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Label layoutX="464.0" layoutY="160.0" text="Sign In">
                     <font>
@@ -27,7 +27,7 @@
                 </Hyperlink>
             </children>
         </AnchorPane>
-        <AnchorPane fx:id="signUp_form" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane fx:id="signUp_form" prefHeight="600.0" prefWidth="1000.0" styleClass="bg-form" stylesheets="@login.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Label layoutX="460.0" layoutY="146.0" text="Sign Up">
                     <font>

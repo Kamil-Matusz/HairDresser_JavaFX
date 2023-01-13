@@ -14,6 +14,8 @@ public class Reservation {
     private int reservation_Quantity;
     private double reservation_Price;
     private Date reservation_Date;
+    private String phone_Number;
+    private String email;
 
     /**
      * Creating new reservations with parametrs
@@ -25,13 +27,15 @@ public class Reservation {
      * @param reservation_Price
      * @param reservation_Date
      */
-    public Reservation(int user_Id, int service_Id, String reservation_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date) {
+    public Reservation(int user_Id, int service_Id, String reservation_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date,String phone_Number,String email) {
         this.user_Id = user_Id;
         this.service_Id = service_Id;
         this.reservation_Name = reservation_Name;
         this.reservation_Quantity = reservation_Quantity;
         this.reservation_Price = reservation_Price;
         this.reservation_Date = reservation_Date;
+        this.phone_Number = phone_Number;
+        this.email = email;
     }
 
     /**
@@ -142,5 +146,19 @@ public class Reservation {
         this.reservation_Date = reservation_Date;
     }
 
+    public String getPhone_Number() {
+        return phone_Number;
+    }
 
+    public void setPhone_Number(String phone_Number) {
+        this.phone_Number = phone_Number;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
