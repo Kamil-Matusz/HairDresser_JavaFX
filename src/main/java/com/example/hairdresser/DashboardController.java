@@ -34,7 +34,6 @@ import java.util.*;
 
 /**
  * The class that manages the main application
- *
  * @author Kamil Matusz
  */
 public class DashboardController implements Initializable {
@@ -157,6 +156,10 @@ public class DashboardController implements Initializable {
     private Statement statement;
     private ResultSet result;
 
+    /**
+     * Switching between application panels
+     * @param event
+     */
     public void switchForm(ActionEvent event) {
         if (event.getSource() == home_Button) {
             home_form.setVisible(true);
@@ -178,6 +181,7 @@ public class DashboardController implements Initializable {
 
             availableServiceShowList();
             availableServicesStatus();
+            availableServicesSearch();
 
             home_Button.setStyle("-fx-background-color: transparent");
             availableServices_Button.setStyle("-fx-background-color: red");
@@ -197,10 +201,12 @@ public class DashboardController implements Initializable {
             reservationServiceName();
             reservationSpinner();
             reservationServicePrice();
-            reservationDisplayTotal();
         }
     }
 
+    /**
+     * Table search by name
+     */
     public void availableServicesSearch() {
         FilteredList<Service> filter = new FilteredList<>(availableServicesList, e -> true);
 
@@ -210,11 +216,13 @@ public class DashboardController implements Initializable {
                     return true;
                 }
                 String searchKey = newValue.toLowerCase();
-                if (PredicateService.getService_Name().contains((searchKey))) {
+
+                if (PredicateService.getService_Name().toLowerCase().toString().contains((searchKey))) {
                     return true;
-                } else {
-                    return false;
+                }else  if (PredicateService.getService_Status().toLowerCase().toString().contains((searchKey))){
+                    return true;
                 }
+                return false;
             });
         });
         SortedList<Service> sortList = new SortedList<>(filter);
@@ -250,6 +258,9 @@ public class DashboardController implements Initializable {
 
 
     String listStatus[] = {"Available", "Not available"};
+    /**
+     * Displaying service status
+     */
     public void availableServicesStatus() {
         List<String> listStatusService = new ArrayList<>();
         for (String data : listStatus) {
@@ -441,11 +452,10 @@ public class DashboardController implements Initializable {
         return listData;
     }
 
+    private ObservableList<Service> availableServicesList;
     /**
      * Displaying elements of the service class in a table
      */
-    private ObservableList<Service> availableServicesList;
-
     public void availableServiceShowList() {
         availableServicesList = availableServices();
 
@@ -457,6 +467,9 @@ public class DashboardController implements Initializable {
     }
 
     private int userId;
+    /**
+     * Retreving the unique user Id from database
+     */
     public void reservationUserId() {
         String sql = "SELECT MAX(user_Id) FROM reservations";
         connect = DatabaseConnection.connectDB();
@@ -520,10 +533,11 @@ public class DashboardController implements Initializable {
         }
 
     }
+
+    private double price = 0;
     /**
      * Retrieving the service price from the table based on its unique id
      */
-    private double price = 0;
     public void reservationServicePrice() {
         reservationUserId();
         String sql = "SELECT service_Id,service_Price from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
@@ -540,19 +554,19 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+    private SpinnerValueFactory<Integer> spinner;
     /**
      * Setting the quantity of ordered services
      */
-    private SpinnerValueFactory<Integer> spinner;
     public void reservationSpinner() {
         spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
         reservation_quantity.setValueFactory(spinner);
     }
 
+    private int qty;
     /**
      * Getting a numerical value from the Quantity field
      */
-    private int qty;
     public void reservationQuantity() {
         qty = reservation_quantity.getValue();
     }
@@ -598,11 +612,11 @@ public class DashboardController implements Initializable {
         try {
 
             Alert alert;
-            if (reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0) {
+            if (reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0 || reservation_PhoneNumber.getText() == null || reservation_Email.getText() == null) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
-                alert.setContentText("Please choose the service");
+                alert.setContentText("Please fill all blanks fields");
                 alert.showAndWait();
             } else {
 
@@ -639,7 +653,6 @@ public class DashboardController implements Initializable {
                 alert.showAndWait();
                 reservationsListData();
                 reservationShowList();
-                reservationDisplayTotal();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -650,27 +663,10 @@ public class DashboardController implements Initializable {
     Date date = new Date();
     java.sql.Date todayDate = new java.sql.Date(date.getTime());
 
-    public void reservationDisplayTotal() {
-        reservationUserId();
-        String sql = "SELECT SUM(reservation_Price) FROM reservations WHERE WHERE reservation_Date = " + "'" + todayDate + "'";
-        connect = DatabaseConnection.connectDB();
-        try {
-            prepare = connect.prepareStatement(sql);
-
-            if (result.next()) {
-                totalPrice = result.getDouble("SUM(reservation_Price)");
-                reservation_total.setText("$" + String.valueOf(totalPrice));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Displaying elements of the reservation class in a table
      */
     private ObservableList<Reservation> reservationsList;
-
     public void reservationShowList() {
         reservationsList = reservationsListData();
 
@@ -761,7 +757,7 @@ public class DashboardController implements Initializable {
         connect = DatabaseConnection.connectDB();
 
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("D:\\Back-End\\Java\\Studia\\HairDresserSalon_JavaFX\\Receipts\\Receipt.pdf"));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\Receipt.pdf"));
             document.open();
 
             statement = connect.createStatement();
@@ -806,11 +802,11 @@ public class DashboardController implements Initializable {
 
         availableServiceShowList();
         availableServicesStatus();
+        availableServicesSearch();
 
         reservationShowList();
         reservationServiceId();
         reservationServiceName();
         reservationSpinner();
-        reservationDisplayTotal();
     }
 }

@@ -7,6 +7,10 @@ import java.sql.DriverManager;
  * Class which contains handling to the database
  */
 public class DatabaseConnection {
+    /**
+     * Method which creating database connection
+     * @return database connection lub null on situation when database in not found or connection failed
+     */
     public static Connection connectDB() {
         try {
             Class.forName("com.mysql.jdbc.Driver");

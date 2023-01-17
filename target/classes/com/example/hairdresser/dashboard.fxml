@@ -185,7 +185,7 @@
                                                 <String fx:value="shadow" />
                                             </styleClass>
                                             <children>
-                                                <TextField fx:id="availableService_search" layoutX="14.0" layoutY="14.0" onAction="#availableServicesSearch" onKeyTyped="#availableServicesSearch" promptText="Search :" styleClass="search" stylesheets="@dashboard.css" />
+                                                <TextField fx:id="availableService_search" layoutX="14.0" layoutY="14.0" onAction="#availableServicesSearch" onKeyPressed="#availableServicesSearch" onKeyTyped="#availableServicesSearch" promptText="Search :" styleClass="search" stylesheets="@dashboard.css" />
                                                 <TableView fx:id="availableService_tableView" layoutX="15.0" layoutY="66.0" onMouseClicked="#availableServicesSelect" prefHeight="442.0" prefWidth="399.0" styleClass="tabble-view" stylesheets="@dashboard.css">
                                                     <columns>
                                                         <TableColumn fx:id="availableService_NameColumn" prefWidth="131.0" text="Service Name" />

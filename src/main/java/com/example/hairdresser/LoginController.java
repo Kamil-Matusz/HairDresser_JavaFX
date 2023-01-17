@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 /**
  * The class that manages the login panel
- *
  * @author Kamil Matusz
  */
 public class LoginController {
@@ -190,7 +189,6 @@ public class LoginController {
 
     /**
      * Method which validate user email address
-     *
      * @return true/false status indicating whether the email address meets the criteria
      */
     public boolean vaildationEmail() {

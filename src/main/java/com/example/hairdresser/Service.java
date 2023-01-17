@@ -4,7 +4,6 @@ import java.util.Date;
 
 /**
  * Represent a serice in database
- *
  * @author Kamil Matusz
  */
 public class Service {
