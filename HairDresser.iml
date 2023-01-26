@@ -75,5 +75,14 @@
     <orderEntry type="library" name="Maven: com.itextpdf:kernel:7.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.itextpdf:io:7.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.13" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/target/jfreechart-1.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

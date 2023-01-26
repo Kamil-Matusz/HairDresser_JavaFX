@@ -13,6 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -30,6 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -151,6 +154,16 @@ public class DashboardController implements Initializable {
     @FXML
     private TextField reservation_Email;
 
+    @FXML
+    private BarChart<?, ?> home_Chart;
+
+    @FXML
+    private DatePicker reservation_DateValue;
+
+    @FXML
+    private AnchorPane reservation_DatePicker;
+
+
     private Connection connect;
     private PreparedStatement prepare;
     private Statement statement;
@@ -173,6 +186,7 @@ public class DashboardController implements Initializable {
             homeAS();
             homeTR();
             homeTP();
+            chart();
 
         } else if (event.getSource() == availableServices_Button) {
             home_form.setVisible(false);
@@ -210,24 +224,30 @@ public class DashboardController implements Initializable {
     public void availableServicesSearch() {
         FilteredList<Service> filter = new FilteredList<>(availableServicesList, e -> true);
 
-        availableService_search.textProperty().addListener((Observable, oldValue, newValue) -> {
-            filter.setPredicate(PredicateService -> {
-                if (newValue.isEmpty() || newValue == null) {
-                    return true;
-                }
-                String searchKey = newValue.toLowerCase();
+        availableService_search.textProperty().addListener((obervable, newvalue, oldvalue) -> {
+            filter.setPredicate(precidateSearch -> {
 
-                if (PredicateService.getService_Name().toLowerCase().toString().contains((searchKey))) {
-                    return true;
-                }else  if (PredicateService.getService_Status().toLowerCase().toString().contains((searchKey))){
+                if(newvalue.isEmpty() || newvalue == null){
                     return true;
                 }
-                return false;
+
+                String searchKey = newvalue.toLowerCase();
+
+                if(precidateSearch.getService_Name().toLowerCase().contains(searchKey)){
+                    return true;
+                }else if(precidateSearch.getService_Status().toLowerCase().contains(searchKey)){
+                    return true;
+                }else{
+
+                    return false;}
             });
         });
-        SortedList<Service> sortList = new SortedList<>(filter);
-        sortList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
-        availableService_tableView.setItems(sortList);
+
+        SortedList<Service> sortedList = new SortedList<>(filter);
+
+        sortedList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
+
+        availableService_tableView.setItems(sortedList);
     }
 
     /**
@@ -327,6 +347,12 @@ public class DashboardController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Alert alert;
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error message");
+            alert.setHeaderText(null);
+            alert.setContentText("This is service already exist");
+            alert.showAndWait();
         }
     }
 
@@ -549,7 +575,6 @@ public class DashboardController implements Initializable {
             if(result.next()) {
                 price = result.getDouble("service_Price");
             }
-            reservation_total.setText(String.valueOf(price));
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -559,7 +584,7 @@ public class DashboardController implements Initializable {
      * Setting the quantity of ordered services
      */
     public void reservationSpinner() {
-        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1, 0);
         reservation_quantity.setValueFactory(spinner);
     }
 
@@ -638,14 +663,12 @@ public class DashboardController implements Initializable {
                 totalPrice = (price * qty);
                 prepare.setString(5, String.valueOf(totalPrice));
 
-                Date date = new Date();
-                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                LocalDate date = reservation_DateValue.getValue();
 
-                prepare.setString(6, String.valueOf(sqlDate));
+                prepare.setString(6, String.valueOf(date));
                 prepare.setString(7,String.valueOf(reservation_PhoneNumber.getText()));
                 prepare.setString(8,String.valueOf(reservation_Email.getText()));
                 prepare.executeUpdate();
-
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Information Message");
                 alert.setHeaderText(null);
@@ -788,6 +811,28 @@ public class DashboardController implements Initializable {
         }
     }
 
+    public void chart() {
+        home_Chart.getData().clear();
+        String sql = "SELECT reservation_Date,COUNT(reservation_Name) FROM reservations GROUP BY reservation_Date ORDER BY TIMESTAMP(reservation_Date)";
+        connect = DatabaseConnection.connectDB();
+        try{
+            XYChart.Series chart = new XYChart.Series();
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            while (result.next()){
+                chart.getData().add(new XYChart.Data(result.getString(1), result.getInt(2)));
+                chart.setName("Reservation Date");
+            }
+
+            home_Chart.getData().add(chart);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Method which initialize DashboardController
      * @param url
@@ -799,6 +844,7 @@ public class DashboardController implements Initializable {
         homeAS();
         homeTR();
         homeTP();
+        chart();
 
         availableServiceShowList();
         availableServicesStatus();

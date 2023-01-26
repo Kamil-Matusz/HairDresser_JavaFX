@@ -2,6 +2,7 @@
   <library name="Maven: com.fasterxml:classmate:1.5.1">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/classmate/1.5.1/classmate-1.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/jfreechart-1.0.4.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/classmate/1.5.1/classmate-1.5.1-javadoc.jar!/" />
