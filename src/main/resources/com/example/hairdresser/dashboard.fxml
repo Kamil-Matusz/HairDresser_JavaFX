@@ -218,38 +218,32 @@
                                                         <String fx:value="shadow" />
                                                     </styleClass>
                                                     <children>
-                                                        <Label layoutX="17.0" layoutY="69.0" text="Service Name :">
+                                                        <Label layoutX="24.0" layoutY="28.0" text="Service Name :">
                                                             <font>
                                                                 <Font size="15.0" />
                                                             </font>
                                                         </Label>
-                                                        <ComboBox fx:id="reservation_serviceName" layoutX="177.0" layoutY="69.0" onAction="#reservationServiceName" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
-                                                        <Spinner fx:id="reservation_quantity" layoutX="172.0" layoutY="112.0" onMouseClicked="#reservationQuantity" styleClass="text-field" stylesheets="@dashboard.css" />
-                                                        <Label layoutX="20.0" layoutY="116.0" text="Quantity :">
+                                                        <ComboBox fx:id="reservation_serviceName" layoutX="184.0" layoutY="28.0" onAction="#reservationServiceName" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
+                                                        <Spinner fx:id="reservation_quantity" layoutX="179.0" layoutY="71.0" onMouseClicked="#reservationQuantity" styleClass="text-field" stylesheets="@dashboard.css" />
+                                                        <Label layoutX="27.0" layoutY="75.0" text="Quantity :">
                                                             <font>
                                                                 <Font size="15.0" />
                                                             </font>
                                                         </Label>
                                                         <Button fx:id="reservation_reserveButton" layoutX="385.0" layoutY="174.0" mnemonicParsing="false" onAction="#createPDF" prefHeight="41.0" prefWidth="192.0" styleClass="add-button" stylesheets="@dashboard.css" text="Complete Reservation" />
-                                                        <Label layoutX="17.0" layoutY="24.0" text="Service ID:">
-                                                            <font>
-                                                                <Font size="15.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <ComboBox fx:id="reservation_serviceID" layoutX="177.0" layoutY="24.0" onAction="#reservationServiceId" prefWidth="150.0" promptText="Choose..." styleClass="text-field" stylesheets="@dashboard.css" />
                                                         <Button fx:id="reservation_addToReservationButton" layoutX="387.0" layoutY="118.0" mnemonicParsing="false" onAction="#addToReservations" prefHeight="38.0" prefWidth="189.0" styleClass="update-button" stylesheets="@dashboard.css" text="Add to reservation" />
-                                          <Label layoutX="20.0" layoutY="158.0" text="Phone Number : ">
+                                          <Label layoutX="27.0" layoutY="117.0" text="Phone Number : ">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="reservation_PhoneNumber" layoutX="174.0" layoutY="156.0" styleClass="text-field" stylesheets="@dashboard.css" />
-                                          <Label layoutX="21.0" layoutY="196.0" text="Email :">
+                                          <TextField fx:id="reservation_PhoneNumber" layoutX="181.0" layoutY="115.0" styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <Label layoutX="28.0" layoutY="155.0" text="Email :">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="reservation_Email" layoutX="175.0" layoutY="194.0" styleClass="text-field" stylesheets="@dashboard.css" />
+                                          <TextField fx:id="reservation_Email" layoutX="182.0" layoutY="153.0" styleClass="text-field" stylesheets="@dashboard.css" />
                                           <DatePicker fx:id="reservation_DateValue" layoutX="387.0" layoutY="28.0" prefHeight="43.0" prefWidth="221.0" promptText="Choose reservation Date..." />
                                                     </children>
                                                 </AnchorPane>

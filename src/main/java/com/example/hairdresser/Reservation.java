@@ -9,7 +9,6 @@ import java.util.Date;
  */
 public class Reservation {
     private int user_Id;
-    private int service_Id;
     private String reservation_Name;
     private int reservation_Quantity;
     private double reservation_Price;
@@ -21,7 +20,6 @@ public class Reservation {
      * Creating new reservations with parametrs
      *
      * @param user_Id
-     * @param service_Id
      * @param reservation_Name
      * @param reservation_Quantity
      * @param reservation_Price
@@ -29,9 +27,8 @@ public class Reservation {
      * @param email
      * @param phone_Number
      */
-    public Reservation(int user_Id, int service_Id, String reservation_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date,String phone_Number,String email) {
+    public Reservation(int user_Id, String reservation_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date,String phone_Number,String email) {
         this.user_Id = user_Id;
-        this.service_Id = service_Id;
         this.reservation_Name = reservation_Name;
         this.reservation_Quantity = reservation_Quantity;
         this.reservation_Price = reservation_Price;
@@ -54,22 +51,6 @@ public class Reservation {
      */
     public void setUser_Id(int user_Id) {
         this.user_Id = user_Id;
-    }
-
-    /**
-     * Gets service id
-     * @return A int representing service id
-     */
-    public int getService_Id() {
-        return service_Id;
-    }
-
-    /**
-     * Sets service id
-     * @param service_Id A int contains service id
-     */
-    public void setService_Id(int service_Id) {
-        this.service_Id = service_Id;
     }
 
     /**

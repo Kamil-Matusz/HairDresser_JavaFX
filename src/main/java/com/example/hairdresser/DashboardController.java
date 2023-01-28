@@ -125,9 +125,6 @@ public class DashboardController implements Initializable {
     private Button reservation_reserveButton;
 
     @FXML
-    private ComboBox<?> reservation_serviceID;
-
-    @FXML
     private TableColumn<Reservation, String> reservation_serviceIDColumn;
 
     @FXML
@@ -211,7 +208,6 @@ public class DashboardController implements Initializable {
             reservation_Button.setStyle("-fx-background-color: red");
 
             reservationShowList();
-            reservationServiceId();
             reservationServiceName();
             reservationSpinner();
             reservationServicePrice();
@@ -222,10 +218,30 @@ public class DashboardController implements Initializable {
      * Table search by name
      */
     public void availableServicesSearch() {
+        /*FilteredList<Service> filteredData = new FilteredList<>(availableServicesList, p -> true);
+
+                availableService_search.textProperty().addListener((observable, oldValue, newValue) -> {
+                    filteredData.setPredicate(person -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true;
+                        }
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        if (person.getService_Name().toLowerCase().contains(lowerCaseFilter)) {
+                            return true;
+                        } else if (person.getService_Status().toLowerCase().contains(lowerCaseFilter)) {
+                            return true;
+                        }
+                        return false;
+                    });
+                });
+
+        SortedList<Service> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(availableService_tableView.comparatorProperty());
+        availableService_tableView.setItems(sortedData);*/
         FilteredList<Service> filter = new FilteredList<>(availableServicesList, e -> true);
 
         availableService_search.textProperty().addListener((obervable, newvalue, oldvalue) -> {
-            filter.setPredicate(precidateSearch -> {
+            filter.setPredicate(precidateMenus -> {
 
                 if(newvalue.isEmpty() || newvalue == null){
                     return true;
@@ -233,12 +249,14 @@ public class DashboardController implements Initializable {
 
                 String searchKey = newvalue.toLowerCase();
 
-                if(precidateSearch.getService_Name().toLowerCase().contains(searchKey)){
+                if(precidateMenus.getService_Name().toLowerCase().contains(searchKey)){
                     return true;
-                }else if(precidateSearch.getService_Status().toLowerCase().contains(searchKey)){
+                }else if(precidateMenus.getService_Status().toLowerCase().contains(searchKey)){
                     return true;
-                }else{
-
+                }else if(precidateMenus.getService_Status().toString().contains(searchKey)){
+                    return true;
+                }
+                else{
                     return false;}
             });
         });
@@ -248,6 +266,7 @@ public class DashboardController implements Initializable {
         sortedList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
 
         availableService_tableView.setItems(sortedList);
+
     }
 
     /**
@@ -275,7 +294,6 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     String listStatus[] = {"Available", "Not available"};
     /**
@@ -323,7 +341,7 @@ public class DashboardController implements Initializable {
 
                     prepare = connect.prepareStatement(sql);
                     prepare.setString(1, availableService_serviceName.getText());
-                    prepare.setString(2, availableService_servicePrice.getText());
+                    prepare.setDouble(2, Double.parseDouble(availableService_servicePrice.getText()));
 
                     Date date = new Date();
                     java.sql.Date sqlDate = new java.sql.Date(date.getTime());
@@ -351,7 +369,7 @@ public class DashboardController implements Initializable {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error message");
             alert.setHeaderText(null);
-            alert.setContentText("This is service already exist");
+            alert.setContentText("This service already exist");
             alert.showAndWait();
         }
     }
@@ -506,7 +524,6 @@ public class DashboardController implements Initializable {
             if (result.next()) {
                 userId = result.getInt("Max(user_Id)");
             }
-
             int count = 0;
             if (userId == 0) {
                 userId += 1;
@@ -519,31 +536,10 @@ public class DashboardController implements Initializable {
     }
 
     /**
-     * Retrieving the unique service Id
-     */
-    public void reservationServiceId() {
-        String sql = "SELECT service_Id,service_Status FROM services WHERE service_Status = 'Available'";
-
-        connect = DatabaseConnection.connectDB();
-        try {
-            ObservableList listData = FXCollections.observableArrayList();
-            prepare = connect.prepareStatement(sql);
-            result = prepare.executeQuery();
-            while (result.next()) {
-                listData.add(result.getInt("service_Id"));
-            }
-            reservation_serviceID.setItems(listData);
-            reservationServiceName();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Retrieving the service name from the table based on its unique id
+     * Retrieving the service name from the table based on its unique name
      */
     public void reservationServiceName() {
-        String sql = "SELECT service_Id,service_Name from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
+        String sql = "SELECT service_Name,service_Status FROM services WHERE service_Status = 'Available'";
         connect = DatabaseConnection.connectDB();
         try {
             prepare = connect.prepareStatement(sql);
@@ -566,7 +562,7 @@ public class DashboardController implements Initializable {
      */
     public void reservationServicePrice() {
         reservationUserId();
-        String sql = "SELECT service_Id,service_Price from services WHERE service_Id = '" + reservation_serviceID.getSelectionModel().getSelectedItem() + "'";
+        String sql = "SELECT service_Name,service_Price from services WHERE service_Name = '" + reservation_serviceName.getSelectionModel().getSelectedItem() + "'";
         connect = DatabaseConnection.connectDB();
         try {
             prepare = connect.prepareStatement(sql);
@@ -615,7 +611,7 @@ public class DashboardController implements Initializable {
 
             Reservation reservation;
             while (result.next()) {
-                reservation = new Reservation(result.getInt("user_Id"), result.getInt("service_Id"), result.getString("reservation_Name"),
+                reservation = new Reservation(result.getInt("user_Id"), result.getString("reservation_Name"),
                         result.getInt("reservation_Quantity"), result.getDouble("reservation_Price"), result.getDate("reservation_Date"),result.getString("phone_Number"),result.getString("email"));
                 list.add(reservation);
             }
@@ -630,14 +626,14 @@ public class DashboardController implements Initializable {
      */
     public void addToReservations() {
         reservationUserId();
-        String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date,phone_Number,email)" +
-                "VALUES(?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO reservations (user_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date,phone_Number,email)" +
+                "VALUES(?,?,?,?,?,?,?)";
 
         connect = DatabaseConnection.connectDB();
         try {
 
             Alert alert;
-            if (reservation_serviceID.getSelectionModel().getSelectedItem() == null || reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0 || reservation_PhoneNumber.getText() == null || reservation_Email.getText() == null) {
+            if (reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0 || reservation_PhoneNumber.getText() == null || reservation_Email.getText() == null) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
@@ -656,18 +652,17 @@ public class DashboardController implements Initializable {
 
                 prepare = connect.prepareStatement(sql);
                 prepare.setString(1, String.valueOf(userId));
-                prepare.setInt(2, (Integer) reservation_serviceID.getSelectionModel().getSelectedItem());
-                prepare.setString(3, (String) reservation_serviceName.getSelectionModel().getSelectedItem());
-                prepare.setString(4, String.valueOf(qty));
+                prepare.setString(2, (String) reservation_serviceName.getSelectionModel().getSelectedItem());
+                prepare.setString(3, String.valueOf(qty));
 
                 totalPrice = (price * qty);
-                prepare.setString(5, String.valueOf(totalPrice));
+                prepare.setString(4, String.valueOf(totalPrice));
 
                 LocalDate date = reservation_DateValue.getValue();
 
-                prepare.setString(6, String.valueOf(date));
-                prepare.setString(7,String.valueOf(reservation_PhoneNumber.getText()));
-                prepare.setString(8,String.valueOf(reservation_Email.getText()));
+                prepare.setString(5, String.valueOf(date));
+                prepare.setString(6,String.valueOf(reservation_PhoneNumber.getText()));
+                prepare.setString(7,String.valueOf(reservation_Email.getText()));
                 prepare.executeUpdate();
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Information Message");
@@ -811,6 +806,9 @@ public class DashboardController implements Initializable {
         }
     }
 
+    /**
+     * Generating a chart with the number of bookings for a given day
+     */
     public void chart() {
         home_Chart.getData().clear();
         String sql = "SELECT reservation_Date,COUNT(reservation_Name) FROM reservations GROUP BY reservation_Date ORDER BY TIMESTAMP(reservation_Date)";
@@ -851,7 +849,6 @@ public class DashboardController implements Initializable {
         availableServicesSearch();
 
         reservationShowList();
-        reservationServiceId();
         reservationServiceName();
         reservationSpinner();
     }
