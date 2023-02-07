@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class Reservation {
     private int user_Id;
-    private String reservation_Name;
+    private String service_Name;
     private int reservation_Quantity;
     private double reservation_Price;
     private Date reservation_Date;
@@ -20,16 +20,16 @@ public class Reservation {
      * Creating new reservations with parametrs
      *
      * @param user_Id
-     * @param reservation_Name
+     * @param service_Name
      * @param reservation_Quantity
      * @param reservation_Price
      * @param reservation_Date
      * @param email
      * @param phone_Number
      */
-    public Reservation(int user_Id, String reservation_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date,String phone_Number,String email) {
+    public Reservation(int user_Id,String service_Name, int reservation_Quantity, double reservation_Price, Date reservation_Date,String phone_Number,String email) {
         this.user_Id = user_Id;
-        this.reservation_Name = reservation_Name;
+        this.service_Name = service_Name;
         this.reservation_Quantity = reservation_Quantity;
         this.reservation_Price = reservation_Price;
         this.reservation_Date = reservation_Date;
@@ -54,19 +54,19 @@ public class Reservation {
     }
 
     /**
-     * Gets reservation name
+     * Gets service name
      * @return A string representing reservation name
      */
     public String getReservation_Name() {
-        return reservation_Name;
+        return service_Name;
     }
 
     /**
-     * Sets reservation name
-     * @param reservation_Name A string contains reservation name
+     * Sets service name
+     * @param service_Name A string contains reservation name
      */
-    public void setReservation_Name(String reservation_Name) {
-        this.reservation_Name = reservation_Name;
+    public void setReservation_Name(String service_Name) {
+        this.service_Name = service_Name;
     }
 
     /**
@@ -148,4 +148,20 @@ public class Reservation {
     public void setEmail(String email) {
         this.email = email;
     }
+
+   /* *//**
+     * Gets email
+     * @return A int representing service identificator
+     *//*
+    public int getServiceId() {
+        return service_Id;
+    }
+
+    *//**
+     * Sets user address email
+     * @param service_Id A string contains service identificator
+     *//*
+    public void setServiceId(int service_Id) {
+        this.service_Id = service_Id;
+    }*/
 }

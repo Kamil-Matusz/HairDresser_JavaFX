@@ -1,8 +1,5 @@
 package com.example.hairdresser;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.layout.Style;
-import com.itextpdf.text.Element;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -23,9 +20,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Table;
-
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.sql.Connection;
@@ -34,6 +28,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * The class that manages the main application
@@ -160,9 +157,16 @@ public class DashboardController implements Initializable {
     @FXML
     private AnchorPane reservation_DatePicker;
 
+    @FXML
+    private TableColumn<Reservation, String> reservation_EmailColumn;
+
+    @FXML
+    private TableColumn<Reservation, String> reservation_PhoneColumn;
+
 
     private Connection connect;
     private PreparedStatement prepare;
+    private PreparedStatement prepare2;
     private Statement statement;
     private ResultSet result;
 
@@ -192,7 +196,6 @@ public class DashboardController implements Initializable {
 
             availableServiceShowList();
             availableServicesStatus();
-            availableServicesSearch();
 
             home_Button.setStyle("-fx-background-color: transparent");
             availableServices_Button.setStyle("-fx-background-color: red");
@@ -212,61 +215,6 @@ public class DashboardController implements Initializable {
             reservationSpinner();
             reservationServicePrice();
         }
-    }
-
-    /**
-     * Table search by name
-     */
-    public void availableServicesSearch() {
-        /*FilteredList<Service> filteredData = new FilteredList<>(availableServicesList, p -> true);
-
-                availableService_search.textProperty().addListener((observable, oldValue, newValue) -> {
-                    filteredData.setPredicate(person -> {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return true;
-                        }
-                        String lowerCaseFilter = newValue.toLowerCase();
-                        if (person.getService_Name().toLowerCase().contains(lowerCaseFilter)) {
-                            return true;
-                        } else if (person.getService_Status().toLowerCase().contains(lowerCaseFilter)) {
-                            return true;
-                        }
-                        return false;
-                    });
-                });
-
-        SortedList<Service> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(availableService_tableView.comparatorProperty());
-        availableService_tableView.setItems(sortedData);*/
-        FilteredList<Service> filter = new FilteredList<>(availableServicesList, e -> true);
-
-        availableService_search.textProperty().addListener((obervable, newvalue, oldvalue) -> {
-            filter.setPredicate(precidateMenus -> {
-
-                if(newvalue.isEmpty() || newvalue == null){
-                    return true;
-                }
-
-                String searchKey = newvalue.toLowerCase();
-
-                if(precidateMenus.getService_Name().toLowerCase().contains(searchKey)){
-                    return true;
-                }else if(precidateMenus.getService_Status().toLowerCase().contains(searchKey)){
-                    return true;
-                }else if(precidateMenus.getService_Status().toString().contains(searchKey)){
-                    return true;
-                }
-                else{
-                    return false;}
-            });
-        });
-
-        SortedList<Service> sortedList = new SortedList<>(filter);
-
-        sortedList.comparatorProperty().bind(availableService_tableView.comparatorProperty());
-
-        availableService_tableView.setItems(sortedList);
-
     }
 
     /**
@@ -313,8 +261,8 @@ public class DashboardController implements Initializable {
      */
     public void availableServices_Add() {
         String sql = "INSERT INTO services (service_Name,service_Price,service_Date,service_Status)" + "VALUES (?,?,?,?)";
-
         connect = DatabaseConnection.connectDB();
+        double servicePrice = 0;
         try {
 
             Alert alert;
@@ -326,41 +274,58 @@ public class DashboardController implements Initializable {
                 alert.setContentText("Please fill all blanks fields");
                 alert.showAndWait();
             } else {
-
-                String checkData = "SELECT service_Name from services WHERE service_Name = '" + availableService_serviceName.getText().isEmpty() + "'";
-                statement = connect.createStatement();
-                result = statement.executeQuery(checkData);
-
-                if (result.next()) {
+                try {
+                    servicePrice = Double.parseDouble(availableService_servicePrice.getText());
+                }
+                catch (NumberFormatException e) {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error message");
                     alert.setHeaderText(null);
-                    alert.setContentText("This service exist");
+                    alert.setContentText("The price must be number!");
+                    alert.showAndWait();
+                }
+                if (servicePrice < 0) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The price cannot be smaller than 1 !");
                     alert.showAndWait();
                 } else {
+                    String checkData = "SELECT service_Name from services WHERE service_Name = '" + availableService_serviceName.getText() + "'";
+                    statement = connect.createStatement();
+                    result = statement.executeQuery(checkData);
 
-                    prepare = connect.prepareStatement(sql);
-                    prepare.setString(1, availableService_serviceName.getText());
-                    prepare.setDouble(2, Double.parseDouble(availableService_servicePrice.getText()));
+                    if (result.next()) {
+                        alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("This service exist");
+                        alert.showAndWait();
+                    } else {
 
-                    Date date = new Date();
-                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                        prepare = connect.prepareStatement(sql);
+                        prepare.setString(1, availableService_serviceName.getText());
+                        prepare.setDouble(2, Double.parseDouble(availableService_servicePrice.getText()));
 
-                    prepare.setString(3, String.valueOf(sqlDate));
-                    prepare.setString(4, String.valueOf(availableService_serviceStatus.getSelectionModel().getSelectedItem()));
+                        Date date = new Date();
+                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
-                    prepare.executeUpdate();
+                        prepare.setString(3, String.valueOf(sqlDate));
+                        prepare.setString(4, String.valueOf(availableService_serviceStatus.getSelectionModel().getSelectedItem()));
 
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Services succesfully added");
-                    alert.showAndWait();
+                        prepare.executeUpdate();
 
-                    availableServiceShowList();
-                    availableServicesClear();
-                    availableServicesSearch();
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Services succesfully added");
+                        alert.showAndWait();
+
+                        availableServiceShowList();
+                        availableServicesClear();
+                    }
                 }
+
             }
 
         } catch (Exception e) {
@@ -372,12 +337,23 @@ public class DashboardController implements Initializable {
             alert.setContentText("This service already exist");
             alert.showAndWait();
         }
+
     }
 
     /**
      * Update record in database
      */
     public void availableServicesUpdate() {
+        double price = Double.parseDouble(availableService_servicePrice.getText());
+        if(price <= 0) {
+            Alert alert;
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error message");
+            alert.setHeaderText(null);
+            alert.setContentText("Price cannot be smaller than 1!");
+            alert.showAndWait();
+        }
+        else {
         String sql = "UPDATE services SET service_Name = \"" + availableService_serviceName.getText() + "\", service_Price = '" + availableService_servicePrice.getText() + "', service_Status = '" + availableService_serviceStatus.getSelectionModel().getSelectedItem() + "'" +
                 "WHERE service_Name = \"" + availableService_serviceName.getText() + "\"";
 
@@ -414,6 +390,7 @@ public class DashboardController implements Initializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
         }
     }
 
@@ -575,12 +552,13 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
     private SpinnerValueFactory<Integer> spinner;
     /**
      * Setting the quantity of ordered services
      */
     public void reservationSpinner() {
-        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1, 0);
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
         reservation_quantity.setValueFactory(spinner);
     }
 
@@ -592,7 +570,6 @@ public class DashboardController implements Initializable {
         qty = reservation_quantity.getValue();
     }
 
-
     /**
      * Retrieving information about all available bookings
      * @return list of reservations
@@ -601,7 +578,11 @@ public class DashboardController implements Initializable {
         reservationUserId();
         ObservableList<Reservation> list = FXCollections.observableArrayList();
 
-        String sql = "SELECT * FROM reservations WHERE user_Id = '" + userId + "'";
+        //String sql = "SELECT * FROM reservations WHERE user_Id = '" + userId + "'";
+        String sql = "SELECT reservations.user_Id,services.service_Name,reservations.reservation_Quantity,reservations.reservation_Price,reservations.reservation_Date,reservations.email,reservations.phone_Number\n" +
+                "FROM reservations\n" +
+                "JOIN services\n" +
+                "WHERE reservations.service_Id = services.service_Id";
 
         connect = DatabaseConnection.connectDB();
 
@@ -611,7 +592,7 @@ public class DashboardController implements Initializable {
 
             Reservation reservation;
             while (result.next()) {
-                reservation = new Reservation(result.getInt("user_Id"), result.getString("reservation_Name"),
+                reservation = new Reservation(result.getInt("user_Id"), result.getString("service_Name"),
                         result.getInt("reservation_Quantity"), result.getDouble("reservation_Price"), result.getDate("reservation_Date"),result.getString("phone_Number"),result.getString("email"));
                 list.add(reservation);
             }
@@ -626,52 +607,72 @@ public class DashboardController implements Initializable {
      */
     public void addToReservations() {
         reservationUserId();
-        String sql = "INSERT INTO reservations (user_Id,reservation_Name,reservation_Quantity,reservation_Price,reservation_Date,phone_Number,email)" +
+        String sql = "INSERT INTO reservations (user_Id,service_Id,reservation_Quantity,reservation_Price,reservation_Date,phone_Number,email)" +
                 "VALUES(?,?,?,?,?,?,?)";
 
         connect = DatabaseConnection.connectDB();
         try {
 
             Alert alert;
-            if (reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0 || reservation_PhoneNumber.getText() == null || reservation_Email.getText() == null) {
+            if (reservation_serviceName.getSelectionModel().getSelectedItem() == null || qty == 0 || reservation_PhoneNumber.getText() == null || reservation_Email.getText() == null || reservation_DateValue.getValue() == null) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error message");
                 alert.setHeaderText(null);
                 alert.setContentText("Please fill all blanks fields");
                 alert.showAndWait();
             } else {
+                try {
+                    if (vaildationEmailReservation() && validationPhoneNumber()) {
+                            double price = 0;
+                            int serviceId = 0;
+                            double totalPrice;
+                            String priceValue = "SELECT service_Id,service_Name,service_Price FROM services WHERE service_Name = \"" + reservation_serviceName.getSelectionModel().getSelectedItem() + "\"";
+                            statement = connect.createStatement();
+                            result = statement.executeQuery(priceValue);
+                            if (result.next()) {
+                                price = result.getDouble("service_Price");
+                                serviceId = result.getInt("service_Id");
+                            }
 
-                double price = 0;
-                double totalPrice;
-                String priceValue = "SELECT service_Name,service_Price FROM services WHERE service_Name = \"" + reservation_serviceName.getSelectionModel().getSelectedItem() + "\"";
-                statement = connect.createStatement();
-                result = statement.executeQuery(priceValue);
-                if (result.next()) {
-                    price = result.getDouble("service_Price");
+                            prepare = connect.prepareStatement(sql);
+                            prepare.setString(1, String.valueOf(userId));
+                            //prepare.setString(2, (String) reservation_serviceName.getSelectionModel().getSelectedItem());
+                            prepare.setString(2, String.valueOf(serviceId));
+                            prepare.setString(3, String.valueOf(qty));
+
+                            totalPrice = (price * qty);
+                            prepare.setString(4, String.valueOf(totalPrice));
+
+                            LocalDate date = reservation_DateValue.getValue();
+
+                            prepare.setString(5, String.valueOf(date));
+                            prepare.setString(6, String.valueOf(reservation_PhoneNumber.getText()));
+                            prepare.setString(7, String.valueOf(reservation_Email.getText()));
+                            prepare.executeUpdate();
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Information Message");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Creating reservation!");
+                            alert.showAndWait();
+                            reservationsListData();
+                            reservationShowList();
+                    } else {
+                        alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("ErrorMessage");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Invalid email or phone number");
+                        alert.showAndWait();
+                    }
+                }catch (PatternSyntaxException e) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("ErrorMessage");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid symbol in phone number");
+                    alert.showAndWait();
                 }
-
-                prepare = connect.prepareStatement(sql);
-                prepare.setString(1, String.valueOf(userId));
-                prepare.setString(2, (String) reservation_serviceName.getSelectionModel().getSelectedItem());
-                prepare.setString(3, String.valueOf(qty));
-
-                totalPrice = (price * qty);
-                prepare.setString(4, String.valueOf(totalPrice));
-
-                LocalDate date = reservation_DateValue.getValue();
-
-                prepare.setString(5, String.valueOf(date));
-                prepare.setString(6,String.valueOf(reservation_PhoneNumber.getText()));
-                prepare.setString(7,String.valueOf(reservation_Email.getText()));
-                prepare.executeUpdate();
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Creating reservation!");
-                alert.showAndWait();
-                reservationsListData();
-                reservationShowList();
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -692,6 +693,8 @@ public class DashboardController implements Initializable {
         reservation_quantityColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Quantity"));
         reservation_priceColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Price"));
         reservation_dateColumn.setCellValueFactory(new PropertyValueFactory<>("reservation_Date"));
+        reservation_PhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone_Number"));
+        reservation_EmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         reservation_tableView.setItems(reservationsList);
     }
@@ -762,47 +765,61 @@ public class DashboardController implements Initializable {
 
     String reservation_Name;
     int reservation_Quantity;
-    double reservation_Price;
-    Date reservation_Date;
+    LocalDate reservation_Date;
+    String Reservation_Email;
+    String Reservation_Phone;
+
 
     /**
      * Generate receipt to pdf file based on a record from the  reservations table
      */
     public void createPDF() {
-        String sql = "SELECT reservation_Name,reservation_Quantity,reservation_Price,reservation_Date FROM reservations WHERE reservation_Date = " + "'" + todayDate + "'";
+
         Alert alert;
         Document document = new Document();
         connect = DatabaseConnection.connectDB();
 
         try {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\Receipt.pdf"));
+            //PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Receipt.pdf"));
             document.open();
 
-            statement = connect.createStatement();
-            result = statement.executeQuery(sql);
-            if (result.next()) {
-                reservation_Name = result.getString("reservation_Name");
-                reservation_Quantity = result.getInt("reservation_Quantity");
-                reservation_Price = result.getDouble("reservation_Price");
-                reservation_Date = result.getDate("reservation_Date");
+            reservation_Name = String.valueOf(reservation_serviceName.getValue());
+            reservation_Quantity = reservation_quantity.getValue();
+            reservation_Date = reservation_DateValue.getValue();
+            Reservation_Email = reservation_Email.getText();
+            Reservation_Phone = reservation_PhoneNumber.getText();
+            if(reservation_Name == null || reservation_Quantity == 0 || reservation_Date == null || reservation_Email == null || reservation_PhoneNumber == null) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error message");
+                alert.setHeaderText(null);
+                alert.setContentText("There are no services to generate on the receipt");
+                alert.showAndWait();
             }
-            document.add(new Paragraph("                                                                    HairDresserSalon"));
-            document.add(new Paragraph("----------------------------------------------------------------------------------------------------------------------------------"));
-            document.add(new Paragraph("Service Name: " + String.valueOf(reservation_Name)));
-            document.add(new Paragraph("Quantity: " + String.valueOf(reservation_Quantity)));
-            document.add(new Paragraph("Price: " + String.valueOf(reservation_Price)));
-            document.add(new Paragraph("Reservation Date: " + String.valueOf(reservation_Date)));
-            document.close();
-            writer.close();
+            else {
+                document.add(new Paragraph("                                                                    HairDresserSalon"));
+                document.add(new Paragraph("----------------------------------------------------------------------------------------------------------------------------------"));
+                document.add(new Paragraph("Service Name: " + String.valueOf(reservation_Name)));
+                document.add(new Paragraph("Quantity: " + String.valueOf(reservation_Quantity)));
+                document.add(new Paragraph("Reservation Date: " + String.valueOf(reservation_Date)));
+                document.add(new Paragraph("Email: " + String.valueOf(Reservation_Email)));
+                document.add(new Paragraph("Phone: " + "+" + String.valueOf(Reservation_Phone)));
+                document.close();
+                writer.close();
 
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information message");
-            alert.setHeaderText(null);
-            alert.setContentText("You reservation is complete! A receipt has been generated");
-            alert.showAndWait();
-
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information message");
+                alert.setHeaderText(null);
+                alert.setContentText("You reservation is complete! A receipt has been generated");
+                alert.showAndWait();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error message");
+            alert.setHeaderText(null);
+            alert.setContentText("It is not possible to generate an invoice or the folder does not exist on the disk");
+            alert.showAndWait();
         }
     }
 
@@ -811,7 +828,7 @@ public class DashboardController implements Initializable {
      */
     public void chart() {
         home_Chart.getData().clear();
-        String sql = "SELECT reservation_Date,COUNT(reservation_Name) FROM reservations GROUP BY reservation_Date ORDER BY TIMESTAMP(reservation_Date)";
+        String sql = "SELECT reservation_Date,COUNT(reservation_Id) FROM reservations GROUP BY reservation_Date ORDER BY TIMESTAMP(reservation_Date)";
         connect = DatabaseConnection.connectDB();
         try{
             XYChart.Series chart = new XYChart.Series();
@@ -832,6 +849,34 @@ public class DashboardController implements Initializable {
     }
 
     /**
+     * Method which validate user email address
+     * @return true/false status indicating whether the email address meets the criteria
+     */
+    public boolean vaildationEmailReservation() {
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9._]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+");
+        Matcher match = pattern.matcher(reservation_Email.getText());
+        if (match.find() && match.group().matches(reservation_Email.getText())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean validationPhoneNumber()
+    {
+        //Pattern pattern = Pattern.compile("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
+        Pattern pattern = Pattern.compile("^[1-9]\\d{0,9}$");
+        Matcher match = pattern.matcher(reservation_PhoneNumber.getText());
+        if(match.find() && match.group().matches(reservation_PhoneNumber.getText())) {
+            return  true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    /**
      * Method which initialize DashboardController
      * @param url
      * @param resourceBundle
@@ -846,10 +891,10 @@ public class DashboardController implements Initializable {
 
         availableServiceShowList();
         availableServicesStatus();
-        availableServicesSearch();
 
         reservationShowList();
         reservationServiceName();
         reservationSpinner();
     }
 }
+

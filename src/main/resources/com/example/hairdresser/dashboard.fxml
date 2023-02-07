@@ -192,8 +192,7 @@
                                                 <String fx:value="shadow" />
                                             </styleClass>
                                             <children>
-                                                <TextField fx:id="availableService_search" layoutX="14.0" layoutY="14.0" onAction="#availableServicesSearch" onDragDetected="#availableServicesSelect" onKeyPressed="#availableServicesSearch" onKeyTyped="#availableServicesSearch" promptText="Search :" styleClass="search" stylesheets="@dashboard.css" />
-                                                <TableView fx:id="availableService_tableView" layoutX="15.0" layoutY="66.0" onMouseClicked="#availableServicesSelect" prefHeight="442.0" prefWidth="399.0" styleClass="tabble-view" stylesheets="@dashboard.css">
+                                                <TableView fx:id="availableService_tableView" layoutX="13.0" layoutY="11.0" onMouseClicked="#availableServicesSelect" prefHeight="497.0" prefWidth="401.0" styleClass="tabble-view" stylesheets="@dashboard.css">
                                                     <columns>
                                                         <TableColumn fx:id="availableService_NameColumn" prefWidth="131.0" text="Service Name" />
                                                         <TableColumn fx:id="availableService_PriceColumn" prefWidth="117.0" text="Price" />
@@ -249,10 +248,12 @@
                                                 </AnchorPane>
                                                 <TableView fx:id="reservation_tableView" layoutX="14.0" layoutY="248.0" prefHeight="254.0" prefWidth="686.0">
                                                     <columns>
-                                                        <TableColumn fx:id="reservation_serviceNameColumn" prefWidth="223.0" text="Service Name" />
-                                                        <TableColumn fx:id="reservation_quantityColumn" prefWidth="199.0" text="Quantity" />
-                                                        <TableColumn fx:id="reservation_priceColumn" prefWidth="129.0" text="Price" />
-                                                        <TableColumn fx:id="reservation_dateColumn" prefWidth="135.0" text="Date" />
+                                                        <TableColumn fx:id="reservation_serviceNameColumn" prefWidth="148.0" text="Service Name" />
+                                                        <TableColumn fx:id="reservation_quantityColumn" prefWidth="125.0" text="Quantity" />
+                                                        <TableColumn fx:id="reservation_priceColumn" prefWidth="76.0" text="Price" />
+                                                        <TableColumn fx:id="reservation_dateColumn" prefWidth="96.0" text="Date" />
+                                          <TableColumn fx:id="reservation_PhoneColumn" prefWidth="122.0" text="Phone" />
+                                          <TableColumn fx:id="reservation_EmailColumn" prefWidth="119.0" text="Email" />
                                                     </columns>
                                                 </TableView>
                                             </children>
