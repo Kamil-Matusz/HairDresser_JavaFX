@@ -5,6 +5,6 @@ Desktop application for managing a hairdressing salon. Final project in Object-O
 - Java
 - JavaFx
 - MySQL
--JDBC
+- JDBC
 
 
